@@ -9,9 +9,9 @@ It helps agents quickly build a high-quality mental model of an unfamiliar codeb
 Codemap is designed for repository understanding and hierarchical codemap generation:
 
 1. Selects relevant code/config files using LLM judgment
-2. Creates `.slim/codemap.json` for change tracking
+2. Creates `.air/codemap.json` for change tracking
 3. Generates `codemap.md` templates (per folder) for fixers to fill in
-4. Migrates legacy `.slim/cartography.json` state to `.slim/codemap.json`
+4. Migrates legacy `.air/cartography.json` state to `.air/codemap.json`
 
 ## How to use
 
@@ -34,7 +34,7 @@ node codemap.mjs update --root /repo
 
 ## Outputs
 
-### `.slim/codemap.json`
+### `.air/codemap.json`
 
 A change-tracking file with hashes for files/folders.
 

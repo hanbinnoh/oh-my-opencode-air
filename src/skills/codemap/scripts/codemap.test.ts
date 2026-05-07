@@ -111,7 +111,7 @@ describe('selectFiles', () => {
 describe('loadState', () => {
   test('migrates legacy cartography state', () => {
     const root = createTempDir();
-    const slimDir = path.join(root, '.slim');
+    const slimDir = path.join(root, '.air');
     mkdirSync(slimDir);
 
     const legacyState = { metadata: { version: '1.0.0' } };

@@ -101,7 +101,7 @@ This codemap intentionally covers the plugin repository itself and excludes the 
 - `AGENTS.md`: agent operating conventions for this repository.
 - `biome.json`: formatting/lint policy.
 - `tsconfig.json`: TypeScript compiler settings.
-- `.slim/codemap.json`: codemap change-detection state for this repository.
+- `.air/codemap.json`: codemap change-detection state for this repository.
 
 ## Recommended Reading Order
 
