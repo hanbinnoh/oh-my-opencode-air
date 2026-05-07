@@ -91,7 +91,6 @@ This codemap intentionally covers the plugin repository itself and excludes the 
 - `src/hooks/task-session-manager/` depends on `src/utils/session-manager.ts` and `src/utils/task.ts` to support child-session reuse.
 - `src/hooks/filter-available-skills/` and agent permission logic rely on shared skill names from the CLI/config layer.
 
-
 ## Root Assets
 
 - `README.md`: user-facing product overview, install docs, and agent descriptions.

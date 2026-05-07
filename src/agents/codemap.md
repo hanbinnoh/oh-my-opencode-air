@@ -34,10 +34,10 @@ Responsibilities:
    - merge `temperature`, `variant`, `options`, `displayName`.
 7. Apply permission defaults per agent (`applyDefaultPermissions`).
  8. Build orchestrator using prompt files + disabled-agent filtering.
-10. Normalize/collect display names and inject `@displayName` references into:
+ 9. Normalize/collect display names and inject `@displayName` references into:
     orchestrator prompt and all custom `orchestratorPrompt` snippets.
-11. Validate display-name collisions/agent-name conflicts.
-12. Return `[orchestrator, ...subagents]`.
+ 10. Validate display-name collisions/agent-name conflicts.
+ 11. Return `[orchestrator, ...subagents]`.
 
 ### Runtime model behavior
 
