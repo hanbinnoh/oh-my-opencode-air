@@ -51,6 +51,80 @@ Create or edit `~/.config/opencode/oh-my-opencode-air.json`:
 }
 ```
 
+### WSL / Offline Installation
+
+사내 환경에서는 `bunx`로 직접 설치가 안 될 수 있습니다. ZIP 파일로 수동 설치하세요.
+
+**1. GitHub에서 ZIP 다운로드:**
+
+```bash
+# GitHub 접속이 가능한 경우
+curl -L -o oh-my-opencode-air.zip https://github.com/hanbinnoh/oh-my-opencode-air/archive/refs/heads/master.zip
+unzip oh-my-opencode-air.zip
+cd oh-my-opencode-air-master
+```
+
+또는 GitHub 웹에서 `Code → Download ZIP`으로 다운로드 후 WSL에 복사.
+
+**2. 빌드 및 설치:**
+
+```bash
+cd oh-my-opencode-air-master
+bun install
+bun run build
+```
+
+**3. OpenCode 설정:**
+
+`~/.config/opencode/opencode.json` (또는 `opencode.jsonc`)에 플러그인 경로 추가:
+
+```jsonc
+{
+  "plugin": ["/home/사용자명/oh-my-opencode-air-master"]
+}
+```
+
+**4. 에이전트 설정:**
+
+`~/.config/opencode/oh-my-opencode-air.json` 생성:
+
+```json
+{
+  "agents": {
+    "orchestrator": { "model": "your-provider/qwen3.5-397b" },
+    "oracle": { "model": "your-provider/qwen3.5-397b" },
+    "explorer": { "model": "your-provider/minimax-2.5" },
+    "fixer": { "model": "your-provider/minimax-2.5" }
+  }
+}
+```
+
+**5. 사내 코드 검색 MCP 설정 (선택):**
+
+환경변수 설정:
+```bash
+export DS_SEARCH_URL="http://사내-검색서버:8080/mcp"
+export DS_SEARCH_API_KEY="your-token"
+```
+
+**6. OpenCode 프롬프트에 추가할 내용:**
+
+아래 내용을 OpenCode의 시스템 프롬프트나 AGENTS.md에 추가하세요:
+
+```
+이 프로젝트는 oh-my-opencode-air 플러그인을 사용합니다.
+에이전트 구성:
+- orchestrator: 계획 및 분배 (직접 코드 수정 금지)
+- explorer: 코드베이스 검색 (읽기 전용)
+- fixer: 코드 수정 (지시대로만 실행)
+- oracle: 아키텍처 조언 (읽기 전용)
+
+중요 규칙:
+1. edit/write 도구 사용 시 반드시 100줄 이하로 분할
+2. orchestrator는 코드를 수정하지 않고 @fixer에게 위임
+3. 불확실하면 @oracle에게 먼저 질문
+```
+
 ### Model Assignment Strategy
 
 - **orchestrator + oracle** → Your strongest model (Qwen3.5 397B). These need reasoning.
