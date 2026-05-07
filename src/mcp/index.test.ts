@@ -9,16 +9,18 @@ describe('createBuiltinMcps', () => {
     expect(names).toContain('websearch');
     expect(names).toContain('context7');
     expect(names).toContain('grep_app');
+    expect(names).toContain('ds_search');
   });
 
   test('returns all MCPs with empty disabled list', () => {
     const mcps = createBuiltinMcps([]);
     const names = Object.keys(mcps);
 
-    expect(names.length).toBe(3);
+    expect(names.length).toBe(4);
     expect(names).toContain('websearch');
     expect(names).toContain('context7');
     expect(names).toContain('grep_app');
+    expect(names).toContain('ds_search');
   });
 
   test('excludes single disabled MCP', () => {
@@ -28,6 +30,7 @@ describe('createBuiltinMcps', () => {
     expect(names).not.toContain('websearch');
     expect(names).toContain('context7');
     expect(names).toContain('grep_app');
+    expect(names).toContain('ds_search');
   });
 
   test('excludes multiple disabled MCPs', () => {
@@ -37,11 +40,17 @@ describe('createBuiltinMcps', () => {
     expect(names).not.toContain('websearch');
     expect(names).not.toContain('grep_app');
     expect(names).toContain('context7');
-    expect(names.length).toBe(1);
+    expect(names).toContain('ds_search');
+    expect(names.length).toBe(2);
   });
 
   test('excludes all MCPs when all disabled', () => {
-    const mcps = createBuiltinMcps(['websearch', 'context7', 'grep_app']);
+    const mcps = createBuiltinMcps([
+      'websearch',
+      'context7',
+      'grep_app',
+      'ds_search',
+    ]);
     const names = Object.keys(mcps);
 
     expect(names.length).toBe(0);
@@ -52,10 +61,11 @@ describe('createBuiltinMcps', () => {
     const names = Object.keys(mcps);
 
     // All valid MCPs should still be present
-    expect(names.length).toBe(3);
+    expect(names.length).toBe(4);
     expect(names).toContain('websearch');
     expect(names).toContain('context7');
     expect(names).toContain('grep_app');
+    expect(names).toContain('ds_search');
   });
 
   test('MCP configs have required properties', () => {
@@ -92,5 +102,14 @@ describe('createBuiltinMcps', () => {
 
     expect(grep_app).toBeDefined();
     expect('url' in grep_app).toBe(true);
+  });
+
+  test('ds_search MCP has correct structure', () => {
+    const mcps = createBuiltinMcps();
+    const ds_search = mcps.ds_search;
+
+    expect(ds_search).toBeDefined();
+    expect('url' in ds_search).toBe(true);
+    expect(ds_search).toHaveProperty('type', 'remote');
   });
 });

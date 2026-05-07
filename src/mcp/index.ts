@@ -1,5 +1,6 @@
 import type { McpName, WebsearchConfig } from '../config';
 import { context7 } from './context7';
+import { dsSearch } from './ds-search';
 import { grep_app } from './grep-app';
 import type { McpConfig } from './types';
 import { createWebsearchConfig, websearch } from './websearch';
@@ -10,6 +11,7 @@ const allBuiltinMcps: Record<McpName, McpConfig> = {
   websearch,
   context7,
   grep_app,
+  ds_search: dsSearch,
 };
 
 /**
