@@ -15,11 +15,8 @@ export type AgentName = (typeof ALL_AGENT_NAMES)[number];
 // Subagent delegation rules: which agents can spawn which subagents
 // orchestrator: can spawn all subagents (full delegation)
 // fixer: leaf node — prompt forbids delegation; use grep/glob for lookups
-// designer: can spawn explorer (for research during design)
-// explorer/librarian/oracle: cannot spawn any subagents (leaf nodes)
 // Unknown agent types not listed here default to explorer-only access
 // Which agents each agent type can spawn via delegation.
-// councillor is internal — only CouncilManager spawns it.
 export const ORCHESTRATABLE_AGENTS = ['explorer', 'oracle', 'fixer'] as const;
 
 /** Agents that cannot be disabled even if listed in disabled_agents config. */
