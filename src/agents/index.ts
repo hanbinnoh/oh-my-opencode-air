@@ -150,8 +150,8 @@ function injectDisplayNames(
  * Sets 'question' permission to 'allow' and includes skill permission presets.
  * If configuredSkills is provided, it honors that list instead of defaults.
  *
- * Note: If the agent already explicitly sets question to 'deny', that is
- * respected (e.g. councillor should not ask questions).
+   * Note: If the agent already explicitly sets question to 'deny', that is
+   * respected.
  */
 function applyDefaultPermissions(
   agent: AgentDefinition,
@@ -168,7 +168,7 @@ function applyDefaultPermissions(
     configuredSkills,
   );
 
-  // Respect explicit deny on question (councillor)
+  // Respect explicit deny on question
   const questionPerm = existing.question === 'deny' ? 'deny' : 'allow';
   const councilSessionPerm = 'deny';
 
