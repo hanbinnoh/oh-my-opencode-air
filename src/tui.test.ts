@@ -68,7 +68,7 @@ describe('readConfigInvalid', () => {
     originalEnv = { ...process.env };
     // Isolate from real user config and env presets
     delete process.env.OPENCODE_CONFIG_DIR;
-    delete process.env.OH_MY_OPENCODE_SLIM_PRESET;
+    delete process.env.OH_MY_OPENCODE_AIR_PRESET;
     configHome = fs.mkdtempSync(path.join(os.tmpdir(), 'omos-tui-env-'));
     process.env.XDG_CONFIG_HOME = configHome;
   });
@@ -85,7 +85,7 @@ describe('readConfigInvalid', () => {
       const configDir = path.join(projectDir, '.opencode');
       fs.mkdirSync(configDir, { recursive: true });
       fs.writeFileSync(
-        path.join(configDir, 'oh-my-opencode-slim.json'),
+        path.join(configDir, 'oh-my-opencode-air.json'),
         JSON.stringify({ agents: { oracle: { temperature: 5 } } }),
       );
 
@@ -102,7 +102,7 @@ describe('readConfigInvalid', () => {
       const configDir = path.join(projectDir, '.opencode');
       fs.mkdirSync(configDir, { recursive: true });
       fs.writeFileSync(
-        path.join(configDir, 'oh-my-opencode-slim.json'),
+        path.join(configDir, 'oh-my-opencode-air.json'),
         JSON.stringify({ agents: { oracle: { model: 'valid/model' } } }),
       );
 

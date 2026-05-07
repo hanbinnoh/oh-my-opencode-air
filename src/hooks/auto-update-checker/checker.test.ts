@@ -83,12 +83,12 @@ describe('auto-update-checker/checker', () => {
         (p: string) => {
           if (p.includes('opencode.json')) {
             return JSON.stringify({
-              plugin: ['file:///dev/oh-my-opencode-slim'],
+              plugin: ['file:///dev/oh-my-opencode-air'],
             });
           }
           if (p.includes('package.json')) {
             return JSON.stringify({
-              name: 'oh-my-opencode-slim',
+              name: 'oh-my-opencode-air',
               version: '1.2.3-dev',
             });
           }
@@ -115,7 +115,7 @@ describe('auto-update-checker/checker', () => {
       );
       const readSpy = spyOn(fs, 'readFileSync').mockReturnValue(
         JSON.stringify({
-          plugin: ['oh-my-opencode-slim'],
+          plugin: ['oh-my-opencode-air'],
         }),
       );
 
@@ -125,7 +125,7 @@ describe('auto-update-checker/checker', () => {
 
       const entry = findPluginEntry('/test');
       expect(entry).not.toBeNull();
-      expect(entry?.entry).toBe('oh-my-opencode-slim');
+      expect(entry?.entry).toBe('oh-my-opencode-air');
       expect(entry?.isPinned).toBe(false);
       expect(entry?.pinnedVersion).toBeNull();
 
@@ -139,7 +139,7 @@ describe('auto-update-checker/checker', () => {
       );
       const readSpy = spyOn(fs, 'readFileSync').mockReturnValue(
         JSON.stringify({
-          plugin: ['oh-my-opencode-slim@1.0.0'],
+          plugin: ['oh-my-opencode-air@1.0.0'],
         }),
       );
 

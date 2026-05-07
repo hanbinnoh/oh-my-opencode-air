@@ -162,7 +162,7 @@ describe('auto-update-checker/index', () => {
 
     expect(cacheMocks.preparePackageUpdate).toHaveBeenCalledWith(
       '0.9.11',
-      'oh-my-opencode-slim',
+      'oh-my-opencode-air',
     );
     expect(crossSpawnMock).toHaveBeenCalledWith(
       ['bun', 'install'],
