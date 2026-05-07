@@ -116,6 +116,82 @@ This fork follows [Karpathy's coding guidelines](https://x.com/karpathy/status/2
 4. **Goal-Driven Execution** — Define success criteria. Loop until verified.
 5. **Write Constraint** — Always chunk edits into ≤100 line segments.
 
+## Troubleshooting: Test Failures
+
+Some tests depend on the runtime environment. Here's how to resolve common failures in on-premise deployments.
+
+### tmux Not Installed (3 failures)
+
+Symptom: `TmuxMultiplexer` tests fail with `no path in output`.
+
+```bash
+# Ubuntu/Debian
+apt-get install -y tmux
+
+# RHEL/CentOS
+yum install -y tmux
+```
+
+tmux is required for the multiplexer feature (watching agents work in real-time panes). If you don't need it, set `"multiplexer": { "type": "none" }` in your config.
+
+### OpenCode SDK Not Installed (11 failures)
+
+Symptom: `paths`, `system/paths`, `providers` tests fail with missing `~/.opencode/bin`.
+
+These tests verify OpenCode CLI integration. Install OpenCode:
+
+```bash
+curl -fsSL https://opencode.ai/install | bash
+```
+
+Or skip them if you only use the plugin programmatically:
+
+```bash
+bun test --test-path-pattern='!paths|system|providers'
+```
+
+### WSL Path/Permission Issues (7 failures)
+
+Symptom: `apply-patch` tests fail with permission mode mismatches (`0o750` vs `438`), or path separator issues (`/` vs `\`).
+
+These only occur in WSL (Windows Subsystem for Linux). On native Linux servers, they pass. If running in WSL:
+
+```bash
+# Option 1: Run tests with permission fix
+sudo mount -o remount,metadata /
+
+# Option 2: Skip WSL-specific tests
+bun test --test-path-pattern='!apply-patch|task-session-manager'
+```
+
+### Dashboard/Interview Integration (27 failures)
+
+Symptom: `dashboard`, `interview service`, `interview manager` tests fail with missing runtime infrastructure.
+
+These require a full OpenCode session (HTTP server, file watchers). They pass in CI with a proper OpenCode installation. For local development:
+
+```bash
+# Skip integration tests
+bun test --test-path-pattern='!interview|dashboard'
+```
+
+### Running Only Unit Tests
+
+To run only the tests that should pass in any environment:
+
+```bash
+bun test --test-path-pattern='!interview|dashboard|paths|system|providers|apply-patch|task-session-manager|tmux|auto-update-checker'
+```
+
+### Environment Checklist for On-Premise Deployment
+
+| Requirement | Required For | Install |
+|-------------|-------------|---------|
+| tmux ≥ 3.0 | Multiplexer (agent panes) | `apt-get install tmux` |
+| OpenCode CLI | Full plugin functionality | `curl -fsSL https://opencode.ai/install \| bash` |
+| Bun ≥ 1.3 | Build & test | `curl -fsSL https://bun.sh/install \| bash` |
+| Node.js ≥ 18 | Biome linter (optional) | `apt-get install nodejs` |
+
 ## License
 
 MIT
