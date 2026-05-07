@@ -14,7 +14,6 @@ import {
   getPreviousRuntimePreset,
   setActiveRuntimePreset,
 } from './config/runtime-preset';
-import { createDivoomManager } from './divoom/manager';
 import {
   createApplyPatchHook,
   createAutoUpdateCheckerHook,
@@ -30,7 +29,6 @@ import {
   ForegroundFallbackManager,
 } from './hooks';
 import { processImageAttachments } from './hooks/image-hook';
-import { createInterviewManager } from './interview';
 import { createBuiltinMcps } from './mcp';
 import {
   getMultiplexer,
@@ -134,9 +132,7 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
   let foregroundFallback: ForegroundFallbackManager;
   let todoContinuationHook: ReturnType<typeof createTodoContinuationHook>;
   let taskSessionManagerHook: ReturnType<typeof createTaskSessionManagerHook>;
-  let interviewManager: ReturnType<typeof createInterviewManager>;
   let presetManager: ReturnType<typeof createPresetManager>;
-  let divoomManager: ReturnType<typeof createDivoomManager>;
   let webfetch: ReturnType<typeof createWebfetchTool>;
   let rewriteDisplayNameMentions: ReturnType<
     typeof createDisplayNameMentionRewriter
@@ -303,9 +299,7 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
       shouldManageSession: (sessionID) =>
         sessionAgentMap.get(sessionID) === 'orchestrator',
     });
-    interviewManager = createInterviewManager(ctx, config);
     presetManager = createPresetManager(ctx, config);
-    divoomManager = createDivoomManager(config.divoom);
 
     toolCount =
       Object.keys(todoContinuationHook.tool).length +
@@ -366,8 +360,6 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
       appLog(ctx, 'warn', msg).catch(() => {});
     }
   });
-
-  divoomManager.onPluginLoad();
 
   return {
     name: 'oh-my-opencode-slim',
@@ -712,7 +704,6 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
         };
       }
 
-      interviewManager.registerCommand(opencodeConfig);
       presetManager.registerCommand(opencodeConfig);
     },
 
@@ -776,12 +767,6 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
       // Handle session.deleted events for pane cleanup
       await multiplexerSessionManager.onSessionDeleted(event);
 
-      await interviewManager.handleEvent(
-        input as {
-          event: { type: string; properties?: Record<string, unknown> };
-        },
-      );
-
       await taskSessionManagerHook.event(
         input as {
           event: {
@@ -790,60 +775,6 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
           };
         },
       );
-
-      if (
-        event.type === 'permission.asked' ||
-        event.type === 'question.asked'
-      ) {
-        const props = event.properties as
-          | { sessionID?: string; id?: string; requestID?: string }
-          | undefined;
-        divoomManager.onUserInputRequired({
-          sessionId: props?.sessionID,
-          requestId: props?.id ?? props?.requestID,
-        });
-      }
-
-      if (
-        event.type === 'permission.replied' ||
-        event.type === 'question.replied' ||
-        event.type === 'question.rejected'
-      ) {
-        const props = event.properties as
-          | { sessionID?: string; requestID?: string; id?: string }
-          | undefined;
-        divoomManager.onUserInputResolved({
-          sessionId: props?.sessionID,
-          requestId: props?.requestID ?? props?.id,
-        });
-      }
-
-      if (input.event.type === 'session.status') {
-        const props = input.event.properties as
-          | { sessionID?: string; status?: { type?: string } }
-          | undefined;
-        const sessionID = props?.sessionID;
-        divoomManager.onOrchestratorStatus({
-          sessionId: sessionID,
-          status: props?.status?.type,
-          isOrchestrator: sessionID
-            ? sessionAgentMap.get(sessionID) === 'orchestrator'
-            : false,
-        });
-      }
-
-      if (input.event.type === 'session.deleted') {
-        const props = input.event.properties as
-          | { info?: { id?: string }; sessionID?: string }
-          | undefined;
-        const sessionID = props?.info?.id ?? props?.sessionID;
-        divoomManager.onSessionDeleted({
-          sessionId: sessionID,
-          isOrchestrator: sessionID
-            ? sessionAgentMap.get(sessionID) === 'orchestrator'
-            : false,
-        });
-      }
 
       if (input.event.type === 'session.deleted') {
         const props = input.event.properties as
@@ -897,29 +828,12 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
         },
         output as { args?: unknown },
       );
-
-      if (input.tool.toLowerCase() === 'task') {
-        divoomManager.onTaskStart({
-          parentSessionId: input.sessionID,
-          callId: input.callID,
-          args: output.args,
-        });
-      }
     },
 
     // Direct interception of /auto-continue command — bypasses LLM
     // round-trip
     'command.execute.before': async (input, output) => {
       await todoContinuationHook.handleCommandExecuteBefore(
-        input as {
-          command: string;
-          sessionID: string;
-          arguments: string;
-        },
-        output as { parts: Array<{ type: string; text?: string }> },
-      );
-
-      await interviewManager.handleCommandExecuteBefore(
         input as {
           command: string;
           sessionID: string;
@@ -1158,13 +1072,6 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
           output as { output: unknown },
         ),
       );
-
-      if (input.tool.toLowerCase() === 'task') {
-        divoomManager.onTaskEnd({
-          parentSessionId: input.sessionID,
-          callId: input.callID,
-        });
-      }
     },
   };
 };

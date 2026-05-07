@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { AGENT_ALIASES, ALL_AGENT_NAMES } from './constants';
-import { CouncilConfigSchema } from './council-schema';
 
 const FALLBACK_AGENT_NAMES = [
   'orchestrator',
@@ -155,23 +154,13 @@ export const WebsearchConfigSchema = z.object({
 export type WebsearchConfig = z.infer<typeof WebsearchConfigSchema>;
 
 // MCP names
-export const McpNameSchema = z.enum(['websearch', 'context7', 'grep_app', 'ds_search']);
+export const McpNameSchema = z.enum([
+  'websearch',
+  'context7',
+  'grep_app',
+  'ds_search',
+]);
 export type McpName = z.infer<typeof McpNameSchema>;
-
-export const InterviewConfigSchema = z.object({
-  maxQuestions: z.number().int().min(1).max(10).default(2),
-  outputFolder: z.string().min(1).default('interview'),
-  autoOpenBrowser: z
-    .boolean()
-    .default(true)
-    .describe(
-      'Automatically open the interview UI in your default browser during interactive runs. Disabled automatically in tests and CI.',
-    ),
-  port: z.number().int().min(0).max(65535).default(0),
-  dashboard: z.boolean().default(false),
-});
-
-export type InterviewConfig = z.infer<typeof InterviewConfigSchema>;
 
 export const SessionManagerConfigSchema = z.object({
   maxSessionsPerAgent: z.number().int().min(1).max(10).default(2),
@@ -180,30 +169,6 @@ export const SessionManagerConfigSchema = z.object({
 });
 
 export type SessionManagerConfig = z.infer<typeof SessionManagerConfigSchema>;
-
-export const DivoomConfigSchema = z.object({
-  enabled: z.boolean().default(false),
-  python: z
-    .string()
-    .min(1)
-    .default(
-      '/Applications/Divoom MiniToo.app/Contents/Resources/.venv/bin/python',
-    ),
-  script: z
-    .string()
-    .min(1)
-    .default(
-      '/Applications/Divoom MiniToo.app/Contents/Resources/tools/divoom_send.py',
-    ),
-  size: z.number().int().min(1).max(1024).default(128),
-  fps: z.number().int().min(1).max(60).default(8),
-  speed: z.number().int().min(1).max(10_000).default(125),
-  maxFrames: z.number().int().min(1).max(500).default(24),
-  posterizeBits: z.number().int().min(1).max(8).default(3),
-  gifs: z.record(z.string(), z.string().min(1)).optional(),
-});
-
-export type DivoomConfig = z.infer<typeof DivoomConfigSchema>;
 
 // Todo continuation configuration
 export const TodoContinuationConfigSchema = z.object({
@@ -323,12 +288,9 @@ export const PluginConfigSchema = z
     // When tmux.enabled is true, it's equivalent to multiplexer.type = 'tmux'
     tmux: TmuxConfigSchema.optional(),
     websearch: WebsearchConfigSchema.optional(),
-    interview: InterviewConfigSchema.optional(),
     sessionManager: SessionManagerConfigSchema.optional(),
-    divoom: DivoomConfigSchema.optional(),
     todoContinuation: TodoContinuationConfigSchema.optional(),
     fallback: FailoverConfigSchema.optional(),
-    council: CouncilConfigSchema.optional(),
   })
   .superRefine((value, ctx) => {
     if (value.agents) {
