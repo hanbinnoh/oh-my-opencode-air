@@ -37,12 +37,8 @@ export const MODEL_MAPPINGS = {
   'opencode-go': {
     orchestrator: { model: 'opencode-go/glm-5.1' },
     oracle: { model: 'opencode-go/deepseek-v4-pro', variant: 'max' },
-    council: { model: 'opencode-go/deepseek-v4-pro', variant: 'high' },
-    librarian: { model: 'opencode-go/minimax-m2.7' },
     explorer: { model: 'opencode-go/minimax-m2.7' },
-    designer: { model: 'opencode-go/kimi-k2.6', variant: 'medium' },
     fixer: { model: 'opencode-go/deepseek-v4-flash', variant: 'high' },
-    observer: { model: 'opencode-go/kimi-k2.6' },
   },
 } as const;
 
@@ -107,10 +103,6 @@ export function generateLiteConfig(
               s.allowedAgents.includes(agentName),
           ).map((s) => s.name),
         ];
-
-    if (agentName === 'designer' && !skills.includes('agent-browser')) {
-      skills.push('agent-browser');
-    }
 
     return {
       model: modelInfo.model,

@@ -59,7 +59,7 @@ CLI install command
 - always materializes generated presets `openai` and `opencode-go`
 - install-time `--preset` only selects between generated presets
 - maps each built-in agent name to provider-specific model/variant
-- injects skill list from recommended + custom skill registries and ensures `agent-browser` for designer
+- injects skill list from recommended + custom skill registries
 - injects default MCP sets from `DEFAULT_AGENT_MCPS`
 - includes tmux block (`layout`, `main_pane_size`) when enabled
 

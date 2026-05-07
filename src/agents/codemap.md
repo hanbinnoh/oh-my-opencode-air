@@ -19,7 +19,7 @@ Responsibilities:
 
 1. Compute the disabled set via `getDisabledAgents()`:
    - from `config.disabled_agents`
-   - with protected-agent guard (`orchestrator`, `councillor` never disabled)
+   - with protected-agent guard (`orchestrator` never disabled)
 2. Build built-in subagents from `SUBAGENT_FACTORIES` (`SUBAGENT_NAMES`).
 3. Discover custom agent names from `config.agents` keys that are not built-ins
    or aliases.
@@ -33,11 +33,7 @@ Responsibilities:
    - array model → `agent._modelArray` and clear `config.model`
    - merge `temperature`, `variant`, `options`, `displayName`.
 7. Apply permission defaults per agent (`applyDefaultPermissions`).
-8. Apply compatibility fallbacks:
-   - `fixer` may inherit `librarian` model when not explicitly configured.
-   - `council` may inherit deprecated `council.master.model` when no explicit
-     `council` override and default remains unresolved.
-9. Build orchestrator using prompt files + disabled-agent filtering.
+ 8. Build orchestrator using prompt files + disabled-agent filtering.
 10. Normalize/collect display names and inject `@displayName` references into:
     orchestrator prompt and all custom `orchestratorPrompt` snippets.
 11. Validate display-name collisions/agent-name conflicts.
@@ -56,8 +52,6 @@ Responsibilities:
 - `getAgentConfigs(config)` converts definitions to SDK configs and sets:
   - `orchestrator` → `mode: primary`
   - built-in specialists → `mode: subagent`
-  - `council` → `mode: all`
-  - `councillor` → `mode: subagent`, `hidden: true`
 - If `displayName` is set:
   - internal key remains registered but hidden
   - host-facing key becomes normalized display name
@@ -65,7 +59,6 @@ Responsibilities:
 Permission defaults:
 
 - `question` defaults to `allow` unless existing explicit deny.
-- `council_session` defaults to `allow` only for `council`.
 - Nested `skill` permissions come from `getSkillPermissionsForAgent` and are
   merged with existing permission maps.
 
@@ -103,6 +96,4 @@ src/index.ts
 
 - `index.ts` (agent registry, overrides, classification, custom agents)
 - `orchestrator.ts` (base prompts, prompt resolution, model-array type)
-- `council.ts`, `councillor.ts` (council tool orchestration + formatting)
-- `explorer.ts`, `librarian.ts`, `oracle.ts`, `designer.ts`, `fixer.ts`,
-  `observer.ts` (specialist factory prompts/config)
+- `explorer.ts`, `oracle.ts`, `fixer.ts` (specialist factory prompts/config)

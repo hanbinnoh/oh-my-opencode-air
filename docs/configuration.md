@@ -1,6 +1,6 @@
 # Configuration Reference
 
-Complete reference for all configuration files and options in oh-my-opencode-slim.
+Complete reference for all configuration files and options in oh-my-opencode-air.
 
 ---
 
@@ -9,31 +9,31 @@ Complete reference for all configuration files and options in oh-my-opencode-sli
 | File | Purpose |
 |------|---------|
 | `~/.config/opencode/opencode.json` | OpenCode core settings (plugin registration, providers) |
-| `~/.config/opencode/oh-my-opencode-slim.json` | Plugin settings — agents, multiplexer, MCPs, council |
-| `~/.config/opencode/oh-my-opencode-slim.jsonc` | Same, but with JSONC (comments + trailing commas). Takes precedence over `.json` if both exist |
-| `.opencode/oh-my-opencode-slim.json` | Project-local overrides (optional, checked first) |
+| `~/.config/opencode/oh-my-opencode-air.json` | Plugin settings — agents, multiplexer, MCPs |
+| `~/.config/opencode/oh-my-opencode-air.jsonc` | Same, but with JSONC (comments + trailing commas). Takes precedence over `.json` if both exist |
+| `.opencode/oh-my-opencode-air.json` | Project-local overrides (optional, checked first) |
 
 > **💡 JSONC recommended:** Use the `.jsonc` extension to add comments and trailing commas. If both `.jsonc` and `.json` exist, `.jsonc` takes precedence.
 
-If OmO-slim detects an invalid plugin config for the current project, the TUI sidebar shows a warning. Run `oh-my-opencode-slim doctor` from your project root for full diagnostics.
+If OmO-air detects an invalid plugin config for the current project, the TUI sidebar shows a warning. Run `oh-my-opencode-air doctor` from your project root for full diagnostics.
 
 ---
 
 ## Prompt Overriding
 
-Customize agent prompts without modifying source code. Create markdown files in `~/.config/opencode/oh-my-opencode-slim/`:
+Customize agent prompts without modifying source code. Create markdown files in `~/.config/opencode/oh-my-opencode-air/`:
 
 | File | Effect |
 |------|--------|
 | `{agent}.md` | Replaces the agent's default prompt entirely |
 | `{agent}_append.md` | Appends custom instructions to the default prompt |
 
-When a `preset` is active, the plugin checks `~/.config/opencode/oh-my-opencode-slim/{preset}/` first, then falls back to the root directory.
+When a `preset` is active, the plugin checks `~/.config/opencode/oh-my-opencode-air/{preset}/` first, then falls back to the root directory.
 
 **Example directory structure:**
 
 ```
-~/.config/opencode/oh-my-opencode-slim/
+~/.config/opencode/oh-my-opencode-air/
   ├── best/
   │   ├── orchestrator.md        # Preset-specific override (used when preset=best)
   │   └── explorer_append.md
@@ -126,7 +126,6 @@ Presets can also be switched at runtime without restarting using the `/preset` c
 | `todoContinuation.autoEnable` | boolean | `false` | Automatically enable auto-continue when session has enough todos |
 | `todoContinuation.autoEnableThreshold` | integer | `4` | Number of todos that triggers auto-enable (only used when `autoEnable` is true, 1–50) |
 
-
 ### Manual Update Mode
 
 Set `autoUpdate` to `false` if you want update notifications without automatic
@@ -143,73 +142,8 @@ see that a new version is available, but the plugin won't install it
 automatically.
 
 > Pinned plugin entries in `opencode.json` (for example
-> `"oh-my-opencode-slim@1.0.1"`) are the true version lock. Those stay pinned
+> `"oh-my-opencode-air@1.0.1"`) are the true version lock. Those stay pinned
 > regardless of `autoUpdate`.
-
-### Divoom Display Integration
-
-Divoom integration is disabled by default. Install and start the Divoom MiniToo
-macOS daemon from
-[`divoom-minitoo-osx`](https://github.com/alvinunreal/divoom-minitoo-osx)
-first, then enable this plugin integration. See the full
-**[Divoom guide](divoom.md)** for setup, daemon startup, and troubleshooting.
-
-When enabled, the plugin sends bundled GIFs to the Divoom MiniToo app's bundled
-CLI:
-
-- plugin load / waiting for user input: `intro.gif`
-- orchestrator busy: `orchestrator.gif`
-- first active delegated agent: that agent's GIF
-- parallel delegated agents: the first agent keeps the display
-- all delegated agents complete while orchestrator keeps working: `orchestrator.gif`
-- orchestrator idle again: `intro.gif`
-
-```jsonc
-{
-  "divoom": {
-    "enabled": true
-  }
-}
-```
-
-For a one-off run without editing config:
-
-```bash
-OH_MY_OPENCODE_SLIM_DIVOOM=1 opencode
-```
-
-If `divoom.enabled` is explicitly set in config, the config value wins over the
-environment variable.
-
-The defaults target the macOS Divoom MiniToo app bundle:
-
-```jsonc
-{
-  "divoom": {
-    "enabled": true,
-    "python": "/Applications/Divoom MiniToo.app/Contents/Resources/.venv/bin/python",
-    "script": "/Applications/Divoom MiniToo.app/Contents/Resources/tools/divoom_send.py",
-    "size": 128,
-    "fps": 8,
-    "speed": 125,
-    "maxFrames": 24,
-    "posterizeBits": 3
-  }
-}
-```
-
-To override a GIF, use either a bundled filename or an absolute path:
-
-```jsonc
-{
-  "divoom": {
-    "enabled": true,
-    "gifs": {
-      "oracle": "/Users/me/Pictures/oracle.gif"
-    }
-  }
-}
-```
 
 ### Session Management
 

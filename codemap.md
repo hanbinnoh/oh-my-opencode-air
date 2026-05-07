@@ -63,7 +63,7 @@ This codemap intentionally covers the plugin repository itself and excludes the 
    - Agent definitions are produced by `src/agents/`.
    - Tool factories from `src/tools/` and MCP definitions from `src/mcp/` are registered.
    - Hooks from `src/hooks/` are attached.
-   - Delegation/council orchestration, multiplexer session mirroring, interview support, task-session aliasing, and runtime preset handling are initialized.
+   - Multiplexer session mirroring, task-session aliasing, and runtime preset handling are initialized.
 
 2. **Interactive request handling**
    - The orchestrator prompt drives routing decisions.
@@ -87,11 +87,10 @@ This codemap intentionally covers the plugin repository itself and excludes the 
 - `src/config/` feeds `src/agents/`, session/delegation utilities, and MCP registration.
 - `src/cli/skills.ts` and `src/cli/custom-skills.ts` bridge install-time skill packaging with runtime permission policy.
 - Session/delegation utilities depend on `src/multiplexer/` and cooperate with helpers in `src/utils/` for depth tracking, result extraction, task output parsing, and alias state.
-- `src/tools/council.ts` delegates into `src/council/`.
 - `src/tools/preset-manager.ts` hooks command execution and updates runtime agent models from configured presets.
 - `src/hooks/task-session-manager/` depends on `src/utils/session-manager.ts` and `src/utils/task.ts` to support child-session reuse.
 - `src/hooks/filter-available-skills/` and agent permission logic rely on shared skill names from the CLI/config layer.
-- `src/interview/` hooks into plugin command/event surfaces exposed by `src/index.ts`.
+
 
 ## Root Assets
 

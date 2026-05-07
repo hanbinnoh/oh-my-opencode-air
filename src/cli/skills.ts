@@ -36,19 +36,7 @@ export interface PermissionOnlySkill {
  * List of recommended skills.
  * Add new skills here to include them in the installation flow.
  */
-export const RECOMMENDED_SKILLS: RecommendedSkill[] = [
-  {
-    name: 'agent-browser',
-    repo: 'https://github.com/vercel-labs/agent-browser',
-    skillName: 'agent-browser',
-    allowedAgents: ['designer'],
-    description: 'High-performance browser automation',
-    postInstallCommands: [
-      'npm install -g agent-browser',
-      'agent-browser install',
-    ],
-  },
-];
+export const RECOMMENDED_SKILLS: RecommendedSkill[] = [];
 
 /**
  * Skills managed externally (not installed by this plugin's CLI).
