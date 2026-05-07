@@ -51,26 +51,16 @@ import { SubagentDepthTracker } from './utils/subagent-depth';
 import { collapseSystemInPlace } from './utils/system-collapse';
 
 /**
- * Best-effort log to opencode's app logger.
- * Wrapped in try/catch to avoid deadlocking on opencode v1.4.8–v1.4.9
- * where client.app.log() during init triggers a middleware cycle.
+ * Log to stderr with a prefix.
  */
-async function appLog(
-  ctx: Parameters<Plugin>[0],
+function appLog(
+  _ctx: Parameters<Plugin>[0],
   level: 'error' | 'warn' | 'info',
   message: string,
-): Promise<void> {
-  try {
-    await ctx.client.app.log({
-      body: { service: 'oh-my-opencode-air', level, message },
-    });
-  } catch {
-    // client.app.log may deadlock or be unavailable; stderr is the
-    // fallback
-    const prefix =
-      level === 'error' ? 'ERROR' : level === 'warn' ? 'WARN' : 'INFO';
-    console.error(`[oh-my-opencode-air] ${prefix}: ${message}`);
-  }
+): void {
+  const prefix =
+    level === 'error' ? 'ERROR' : level === 'warn' ? 'WARN' : 'INFO';
+  console.error(`[oh-my-opencode-air] ${prefix}: ${message}`);
 }
 
 /** Minimum expected registrations for a healthy plugin load. */
@@ -312,7 +302,7 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
     await appLog(
       ctx,
       'error',
-      `INIT FAILED: ${String(err)}. Report at github.com/alvinunreal/oh-my-opencode-air/issues/310`,
+      `INIT FAILED: ${String(err)}`,
     );
     throw err;
   }
@@ -337,8 +327,6 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
       `  tools:  ${toolCount} (expected >=${HEALTH_CHECK.minTools})`,
       `  mcps:   ${mcpCount} (expected >=${mcpThreshold})`,
       'This usually means a dependency failed to resolve (jsdom, etc).',
-      'If you recently updated opencode, see:',
-      '  github.com/alvinunreal/oh-my-opencode-air/issues/310',
     ].join('\n');
     log(`[plugin] WARN: ${msg}`);
     await appLog(ctx, 'warn', msg);
@@ -357,7 +345,7 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
     if (err) {
       const msg = `jsdom probe failed; webfetch tool will not work: ${err}`;
       log(`[plugin] WARN: ${msg}`);
-      appLog(ctx, 'warn', msg).catch(() => {});
+      appLog(ctx, 'warn', msg);
     }
   });
 
