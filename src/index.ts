@@ -299,11 +299,7 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
     // Plugin init failed: log visibly before re-throwing so the user
     // sees something actionable instead of a silent "loaded but empty".
     log('[plugin] FATAL: init failed', String(err));
-    await appLog(
-      ctx,
-      'error',
-      `INIT FAILED: ${String(err)}`,
-    );
+    await appLog(ctx, 'error', `INIT FAILED: ${String(err)}`);
     throw err;
   }
 
@@ -617,10 +613,7 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
         // (e.g., core built-ins like "explore"). Skip aliases with no
         // existing entry to avoid injecting ghost agent configs.
         if (!(alias in configAgent)) continue;
-        const aliasEntry = configAgent[alias] as Record<
-          string,
-          unknown
-        >;
+        const aliasEntry = configAgent[alias] as Record<string, unknown>;
         // Mirror model-routing fields: set when present, delete when absent
         for (const field of ['model', 'variant', 'temperature'] as const) {
           if (targetEntry[field] !== undefined) {

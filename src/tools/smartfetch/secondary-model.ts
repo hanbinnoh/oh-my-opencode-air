@@ -97,9 +97,7 @@ export async function readSecondaryModelFromConfig(directory: string) {
     const explorerModel = pickAgentModelRef(
       pluginConfig.agents?.explorer?.model,
     );
-    const oracleModel = pickAgentModelRef(
-      pluginConfig.agents?.oracle?.model,
-    );
+    const oracleModel = pickAgentModelRef(pluginConfig.agents?.oracle?.model);
 
     pushModel(explorerModel);
     pushModel(oracleModel);

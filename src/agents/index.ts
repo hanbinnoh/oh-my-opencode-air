@@ -150,8 +150,8 @@ function injectDisplayNames(
  * Sets 'question' permission to 'allow' and includes skill permission presets.
  * If configuredSkills is provided, it honors that list instead of defaults.
  *
-   * Note: If the agent already explicitly sets question to 'deny', that is
-   * respected.
+ * Note: If the agent already explicitly sets question to 'deny', that is
+ * respected.
  */
 function applyDefaultPermissions(
   agent: AgentDefinition,
