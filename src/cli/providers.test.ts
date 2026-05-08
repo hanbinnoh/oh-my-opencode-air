@@ -29,8 +29,8 @@ describe('providers', () => {
     expect(config.preset).toBe('openai');
     expect(config.disabled_agents).toBeUndefined();
     expect((config.presets as any)['opencode-go']).toBeDefined();
-    expect((config.presets as any)['opencode-go'].observer.model).toBe(
-      'opencode-go/kimi-k2.6',
+    expect((config.presets as any)['opencode-go'].orchestrator.model).toBe(
+      'opencode-go/glm-5.1',
     );
     const agents = (config.presets as any).openai;
     expect(agents).toBeDefined();
@@ -54,12 +54,8 @@ describe('providers', () => {
     );
     expect(agents.oracle.model).toBe('openai/gpt-5.5');
     expect(agents.oracle.variant).toBe('high');
-    expect(agents.librarian.model).toBe('openai/gpt-5.4-mini');
-    expect(agents.librarian.variant).toBe('low');
     expect(agents.explorer.model).toBe('openai/gpt-5.4-mini');
     expect(agents.explorer.variant).toBe('low');
-    expect(agents.designer.model).toBe('openai/gpt-5.4-mini');
-    expect(agents.designer.variant).toBe('medium');
   });
 
   test('generateLiteConfig can set opencode-go as active preset', () => {
@@ -79,14 +75,9 @@ describe('providers', () => {
     expect(agents.orchestrator.model).toBe('opencode-go/glm-5.1');
     expect(agents.oracle.model).toBe('opencode-go/deepseek-v4-pro');
     expect(agents.oracle.variant).toBe('max');
-    expect(agents.council.model).toBe('opencode-go/deepseek-v4-pro');
-    expect(agents.council.variant).toBe('high');
-    expect(agents.librarian.model).toBe('opencode-go/minimax-m2.7');
     expect(agents.explorer.model).toBe('opencode-go/minimax-m2.7');
-    expect(agents.designer.model).toBe('opencode-go/kimi-k2.6');
     expect(agents.fixer.model).toBe('opencode-go/deepseek-v4-flash');
     expect(agents.fixer.variant).toBe('high');
-    expect(agents.observer.model).toBe('opencode-go/kimi-k2.6');
   });
 
   test('generateLiteConfig rejects unsupported preset', () => {
@@ -156,8 +147,6 @@ describe('providers', () => {
     // Orchestrator should implicitly cover bundled codemap via '*'
     expect(agents.orchestrator.skills).toContain('*');
 
-    // Designer should have 'agent-browser'
-    expect(agents.designer.skills).toContain('agent-browser');
 
     // Explorer should have no bundled skills by default
     expect(agents.explorer.skills).toEqual([]);
@@ -177,8 +166,8 @@ describe('providers', () => {
     const agents = (config.presets as any).openai;
     expect(agents.orchestrator.mcps).toBeDefined();
     expect(Array.isArray(agents.orchestrator.mcps)).toBe(true);
-    expect(agents.librarian.mcps).toBeDefined();
-    expect(Array.isArray(agents.librarian.mcps)).toBe(true);
+    expect(agents.explorer.mcps).toBeDefined();
+    expect(Array.isArray(agents.explorer.mcps)).toBe(true);
   });
 
   test('generateLiteConfig openai includes correct mcps', () => {
@@ -191,9 +180,7 @@ describe('providers', () => {
 
     const agents = (config.presets as any).openai;
     expect(agents.orchestrator.mcps).toEqual(['*', '!context7']);
-    expect(agents.librarian.mcps).toContain('websearch');
-    expect(agents.librarian.mcps).toContain('context7');
-    expect(agents.librarian.mcps).toContain('grep_app');
-    expect(agents.designer.mcps).toEqual([]);
+    expect(agents.explorer.mcps).toContain('websearch');
+    expect(agents.explorer.mcps).toContain('grep_app');
   });
 });

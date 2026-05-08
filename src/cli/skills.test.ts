@@ -13,10 +13,6 @@ describe('skills permissions', () => {
   });
 
   it('should allow recommended skills for specific agents', () => {
-    // Designer should have agent-browser allowed
-    const designerPerms = getSkillPermissionsForAgent('designer');
-    expect(designerPerms['agent-browser']).toBe('allow');
-
     // Oracle should have simplify allowed by default
     const oraclePerms = getSkillPermissionsForAgent('oracle');
     expect(oraclePerms.simplify).toBe('allow');

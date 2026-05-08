@@ -116,19 +116,7 @@ describe('loadPluginConfig', () => {
             fallback2: 'chutes/Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8-TEE',
             fallback3: 'opencode/gpt-5-nano',
           },
-          designer: {
-            primary: 'openai/gpt-5.5',
-            fallback1: 'anthropic/claude-opus-4-6',
-            fallback2: 'chutes/kimi-k2.5',
-            fallback3: 'opencode/gpt-5-nano',
-          },
           explorer: {
-            primary: 'openai/gpt-5.5',
-            fallback1: 'anthropic/claude-opus-4-6',
-            fallback2: 'chutes/kimi-k2.5',
-            fallback3: 'opencode/gpt-5-nano',
-          },
-          librarian: {
             primary: 'openai/gpt-5.5',
             fallback1: 'anthropic/claude-opus-4-6',
             fallback2: 'chutes/kimi-k2.5',
@@ -1210,7 +1198,7 @@ describe('JSONC config support', () => {
       path.join(userOpencodeDir, 'oh-my-opencode-air.jsonc'),
       `{
         // User config with comments
-        "agents": { "librarian": { "model": "user-librarian" } }
+        "agents": { "explorer": { "model": "user-explorer" } }
       }`,
     );
 
@@ -1218,7 +1206,7 @@ describe('JSONC config support', () => {
     fs.mkdirSync(projectDir, { recursive: true });
 
     const config = loadPluginConfig(projectDir);
-    expect(config.agents?.librarian?.model).toBe('user-librarian');
+    expect(config.agents?.explorer?.model).toBe('user-explorer');
   });
 
   test('merges user .jsonc with project .jsonc', () => {
