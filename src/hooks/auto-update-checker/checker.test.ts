@@ -26,30 +26,30 @@ beforeEach(async () => {
 
 describe('auto-update-checker/checker', () => {
   describe('extractChannel', () => {
-    test('returns latest for null or empty', async () => {
+    test('returns latest for null or empty', () => {
       expect(extractChannel(null)).toBe('latest');
       expect(extractChannel('')).toBe('latest');
     });
 
-    test('returns tag if version starts with non-digit', async () => {
+    test('returns tag if version starts with non-digit', () => {
       expect(extractChannel('beta')).toBe('beta');
       expect(extractChannel('next')).toBe('next');
     });
 
-    test('extracts channel from prerelease version', async () => {
+    test('extracts channel from prerelease version', () => {
       expect(extractChannel('1.0.0-alpha.1')).toBe('alpha');
       expect(extractChannel('2.3.4-beta.5')).toBe('beta');
       expect(extractChannel('0.1.0-rc.1')).toBe('rc');
       expect(extractChannel('1.0.0-canary.0')).toBe('canary');
     });
 
-    test('returns latest for standard versions', async () => {
+    test('returns latest for standard versions', () => {
       expect(extractChannel('1.0.0')).toBe('latest');
     });
   });
 
   describe('getLocalDevVersion', () => {
-    test('returns null if no local dev path in config', async () => {
+    test('returns null if no local dev path in config', () => {
       const existsSpy = spyOn(fs, 'existsSync').mockReturnValue(false);
 
       expect(getLocalDevVersion('/test')).toBeNull();
@@ -57,7 +57,7 @@ describe('auto-update-checker/checker', () => {
       existsSpy.mockRestore();
     });
 
-    test('returns version from local package.json if path exists', async () => {
+    test('returns version from local package.json if path exists', () => {
       const existsSpy = spyOn(fs, 'existsSync').mockImplementation(
         (p: string) => {
           if (p.includes('opencode.json')) return true;
@@ -97,7 +97,7 @@ describe('auto-update-checker/checker', () => {
   });
 
   describe('findPluginEntry', () => {
-    test('detects latest version entry', async () => {
+    test('detects latest version entry', () => {
       const existsSpy = spyOn(fs, 'existsSync').mockImplementation(
         (p: string) => p.includes('opencode.json'),
       );
@@ -117,7 +117,7 @@ describe('auto-update-checker/checker', () => {
       readSpy.mockRestore();
     });
 
-    test('detects pinned version entry', async () => {
+    test('detects pinned version entry', () => {
       const existsSpy = spyOn(fs, 'existsSync').mockImplementation(
         (p: string) => p.includes('opencode.json'),
       );

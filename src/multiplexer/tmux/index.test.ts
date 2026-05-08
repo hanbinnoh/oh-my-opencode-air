@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, mock, test } from 'bun:test';
+import { beforeEach, describe, expect, mock, test } from 'bun:test';
 
 type SpawnResult = {
   exited: Promise<number>;
@@ -25,6 +25,20 @@ let TmuxMultiplexer: typeof import('./index').TmuxMultiplexer;
 beforeEach(async () => {
   const mod = await import('./index');
   TmuxMultiplexer = mod.TmuxMultiplexer;
+
+  process.env.TMUX = '/tmp/tmux-test/default,1,0';
+  process.env.TMUX_PANE = '%1';
+
+  logMock.mockClear();
+  crossSpawnMock.mockReset();
+  crossSpawnMock.mockImplementation((command: string[]) => {
+    if (command[0] === 'which') return createSpawnResult(0, '/usr/bin/tmux\n');
+    if (command[1] === '-V') return createSpawnResult(0, 'tmux 3.6a');
+    if (command[1] === 'split-window') {
+      return createSpawnResult(0, '%2\n');
+    }
+    return createSpawnResult();
+  });
 });
 
 function createSpawnResult(
@@ -51,31 +65,6 @@ function commands(): string[][] {
 }
 
 describe('TmuxMultiplexer', () => {
-  const originalTmux = process.env.TMUX;
-  const originalTmuxPane = process.env.TMUX_PANE;
-
-  beforeEach(() => {
-    process.env.TMUX = '/tmp/tmux-test/default,1,0';
-    process.env.TMUX_PANE = '%1';
-
-    logMock.mockClear();
-    crossSpawnMock.mockReset();
-    crossSpawnMock.mockImplementation((command: string[]) => {
-      if (command[0] === 'which')
-        return createSpawnResult(0, '/usr/bin/tmux\n');
-      if (command[1] === '-V') return createSpawnResult(0, 'tmux 3.6a');
-      if (command[1] === 'split-window') {
-        return createSpawnResult(0, '%2\n');
-      }
-      return createSpawnResult();
-    });
-  });
-
-  afterEach(() => {
-    process.env.TMUX = originalTmux;
-    process.env.TMUX_PANE = originalTmuxPane;
-  });
-
   test('coalesces layout application after bursty pane spawns', async () => {
     const tmux = new TmuxMultiplexer('main-vertical', 60);
 
@@ -91,3 +80,73 @@ describe('TmuxMultiplexer', () => {
       'http://localhost:4096',
       '/repo',
     );
+
+    expect(
+      commands().filter((command) => command.includes('select-layout')),
+    ).toHaveLength(0);
+
+    await wait(300);
+
+    const layoutCommands = commands().filter((command) =>
+      command.includes('select-layout'),
+    );
+    const sizeCommands = commands().filter((command) =>
+      command.includes('set-window-option'),
+    );
+
+    expect(layoutCommands).toHaveLength(2);
+    expect(sizeCommands).toHaveLength(1);
+    expect(sizeCommands[0]).toContain('main-pane-width');
+    expect(sizeCommands[0]).toContain('60%');
+  });
+
+  test('logs and stops layout sequence when a tmux layout command fails', async () => {
+    const tmux = new TmuxMultiplexer('main-vertical', 60);
+
+    crossSpawnMock.mockImplementation((command: string[]) => {
+      if (command[0] === 'which')
+        return createSpawnResult(0, '/usr/bin/tmux\n');
+      if (command[1] === '-V') return createSpawnResult(0, 'tmux 3.6a');
+      if (command.includes('select-layout')) {
+        return createSpawnResult(1, '', 'layout failed');
+      }
+      return createSpawnResult();
+    });
+
+    await tmux.applyLayout('main-vertical', 60);
+
+    expect(
+      commands().filter((command) => command.includes('set-window-option')),
+    ).toHaveLength(0);
+    expect(logMock).toHaveBeenCalledWith('[tmux] command failed', {
+      command: 'select-layout',
+      args: ['/usr/bin/tmux', 'select-layout', '-t', '%1', 'main-vertical'],
+      exitCode: 1,
+      stderr: 'layout failed',
+    });
+    expect(logMock).not.toHaveBeenCalledWith(
+      '[tmux] applyLayout: applied',
+      expect.anything(),
+    );
+  });
+
+  test('direct applyLayout cancels a pending debounced layout', async () => {
+    const tmux = new TmuxMultiplexer('main-vertical', 60);
+
+    await tmux.spawnPane(
+      'session-1',
+      'First worker',
+      'http://localhost:4096',
+      '/repo',
+    );
+    await tmux.applyLayout('tiled', 60);
+    await wait(300);
+
+    const layoutCommands = commands().filter((command) =>
+      command.includes('select-layout'),
+    );
+
+    expect(layoutCommands).toHaveLength(1);
+    expect(layoutCommands[0]).toContain('tiled');
+  });
+});

@@ -147,7 +147,6 @@ describe('providers', () => {
     // Orchestrator should implicitly cover bundled codemap via '*'
     expect(agents.orchestrator.skills).toContain('*');
 
-
     // Explorer should have no bundled skills by default
     expect(agents.explorer.skills).toEqual([]);
 
