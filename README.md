@@ -21,7 +21,14 @@ If you are an AI agent reading this README to install the plugin, follow these s
 bun --version
 ```
 
-If bun is not installed:
+Must be **bun v1.1.x** — v1.2+ has a WSL UNC path bug. If on WSL and bun v1.2+ is installed:
+```bash
+curl -fsSL -o /tmp/bun.zip https://github.com/oven-sh/bun/releases/download/bun-v1.1.38/bun-linux-x64.zip
+unzip -o /tmp/bun.zip -d /tmp/bun-old && mkdir -p ~/.opencode/bin
+cp /tmp/bun-old/bun-linux-x64/bun ~/.opencode/bin/bun && chmod +x ~/.opencode/bin/bun
+```
+
+If bun is not installed at all:
 ```bash
 curl -fsSL https://bun.sh/install | bash
 ```
