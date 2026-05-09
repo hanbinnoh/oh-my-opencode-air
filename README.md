@@ -95,11 +95,11 @@ Edit `~/.config/opencode/oh-my-opencode-air.json` to customize:
 ```json
 {
   "agents": {
-    "orchestrator": { "model": "your-provider/qwen3.5-397b", "temperature": 0.1 },
-    "oracle": { "model": "your-provider/qwen3.5-397b", "temperature": 0.1 },
-    "explorer": { "model": "your-provider/minimax-2.5", "temperature": 0.1 },
-    "librarian": { "model": "your-provider/minimax-2.5", "temperature": 0.1 },
-    "fixer": { "model": "your-provider/minimax-2.5", "temperature": 0.2 }
+    "orchestrator": { "model": "codemate/DSllmOCoder", "temperature": 0.1 },
+    "oracle": { "model": "codemate/DSllmOCoder", "temperature": 0.1 },
+    "explorer": { "model": "codemate/DSllmOCoderStable", "temperature": 0.1 },
+    "librarian": { "model": "codemate/DSllmOCoderStable", "temperature": 0.1 },
+    "fixer": { "model": "codemate/DSllmOCoderStable", "temperature": 0.2 }
   }
 }
 ```
