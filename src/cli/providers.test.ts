@@ -74,10 +74,10 @@ describe('providers', () => {
     expect(agents).toBeDefined();
     expect(agents.orchestrator.model).toBe('opencode-go/glm-5.1');
     expect(agents.oracle.model).toBe('opencode-go/deepseek-v4-pro');
-    expect(agents.oracle.variant).toBe('max');
+    expect(agents.oracle.variant).toBe('high');
     expect(agents.explorer.model).toBe('opencode-go/minimax-m2.7');
     expect(agents.fixer.model).toBe('opencode-go/deepseek-v4-flash');
-    expect(agents.fixer.variant).toBe('high');
+    expect(agents.fixer.variant).toBe('low');
   });
 
   test('generateLiteConfig rejects unsupported preset', () => {
