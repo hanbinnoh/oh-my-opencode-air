@@ -6,11 +6,11 @@ Agent orchestration plugin for on-premise models (Qwen3.5, Minimax). Fork of oh-
 
 | Agent | Role | Default Model |
 |-------|------|---------------|
-| **orchestrator** | Plans and delegates. Does NOT write code. | `codemate/DSllmOCoder` |
-| **explorer** | Searches codebase (glob, grep, AST). Read-only. | `codemate/DSllmOCoderStable` |
-| **librarian** | External docs and company code search (web, GitHub, internal). | `codemate/DSllmOCoderStable` |
-| **fixer** | Implements changes. Follows instructions exactly. | `codemate/DSllmOCoderStable` |
-| **oracle** | Strategic advice, code review, debugging. Read-only. | `codemate/DSllmOCoder` |
+| **orchestrator** | Plans and delegates. Does NOT write code. | `codemate/DSllmOCoder` (Qwen3.5 397B) |
+| **explorer** | Searches codebase (glob, grep, AST). Read-only. | `codemate/DSllmOCoderStable` (Minimax 2.5) |
+| **librarian** | External docs and company code search (web, GitHub, internal). | `codemate/DSllmOCoderStable` (Minimax 2.5) |
+| **fixer** | Implements changes. Follows instructions exactly. | `codemate/DSllmOCoderStable` (Minimax 2.5) |
+| **oracle** | Strategic advice, code review, debugging. Read-only. | `codemate/DSllmOCoder` (Qwen3.5 397B) |
 
 ## Installation (for AI agents)
 
