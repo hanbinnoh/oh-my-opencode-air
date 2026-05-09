@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, mock, test } from 'bun:test';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { createWebfetchTool } from './tool';
 
 function createExecutionContext() {
@@ -6,7 +8,7 @@ function createExecutionContext() {
     ask: mock(async () => undefined),
     metadata: mock(() => undefined),
     abort: new AbortController().signal,
-    directory: '/tmp/smartfetch-test',
+    directory: join(tmpdir(), 'smartfetch-test'),
   } as any;
 }
 

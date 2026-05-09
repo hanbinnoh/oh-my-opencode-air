@@ -16,6 +16,7 @@ import { getAgentMcpList } from '../config/agent-mcps';
 
 import { createExplorerAgent } from './explorer';
 import { createFixerAgent } from './fixer';
+import { createLibrarianAgent } from './librarian';
 import { createOracleAgent } from './oracle';
 import {
   type AgentDefinition,
@@ -198,6 +199,7 @@ const SUBAGENT_FACTORIES: Record<SubagentName, AgentFactory> = {
   explorer: createExplorerAgent,
   oracle: createOracleAgent,
   fixer: createFixerAgent,
+  librarian: createLibrarianAgent,
 };
 
 // Public API

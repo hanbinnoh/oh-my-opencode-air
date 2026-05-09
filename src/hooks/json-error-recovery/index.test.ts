@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, test } from 'bun:test';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import type { PluginInput } from '@opencode-ai/plugin';
 import {
   createJsonErrorRecoveryHook,
@@ -19,7 +21,7 @@ describe('json-error-recovery hook', () => {
   const createMockPluginInput = (): PluginInput => {
     return {
       client: {} as PluginInput['client'],
-      directory: '/tmp/test',
+      directory: join(tmpdir(), 'test'),
     } as PluginInput;
   };
 

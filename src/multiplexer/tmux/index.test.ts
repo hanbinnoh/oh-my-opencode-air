@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 type SpawnResult = {
   exited: Promise<number>;
@@ -26,7 +28,7 @@ beforeEach(async () => {
   const mod = await import('./index');
   TmuxMultiplexer = mod.TmuxMultiplexer;
 
-  process.env.TMUX = '/tmp/tmux-test/default,1,0';
+  process.env.TMUX = join(tmpdir(), 'tmux-test', 'default,1,0');
   process.env.TMUX_PANE = '%1';
 
   logMock.mockClear();
@@ -64,7 +66,10 @@ function commands(): string[][] {
   return crossSpawnMock.mock.calls.map((call) => call[0] as string[]);
 }
 
-describe('TmuxMultiplexer', () => {
+const describePlatform =
+  process.platform === 'win32' ? describe.skip : describe;
+
+describePlatform('TmuxMultiplexer', () => {
   test('coalesces layout application after bursty pane spawns', async () => {
     const tmux = new TmuxMultiplexer('main-vertical', 60);
 

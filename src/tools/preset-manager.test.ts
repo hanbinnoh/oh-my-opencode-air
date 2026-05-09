@@ -18,7 +18,7 @@ function createMockContext() {
         update: configUpdate,
       },
     },
-    directory: '/tmp/test',
+    directory: path.join(os.tmpdir(), 'test'),
   } as any;
 }
 

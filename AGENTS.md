@@ -13,6 +13,11 @@
 - Do NOT invent agents that don't exist
 - Delegate to appropriate agents; don't do their work yourself
 
+**Bash tool restriction:** The write constraint hook only monitors edit/write tools.
+- NEVER use the `bash` tool for file modifications (cat, echo >, sed -i, redirects, etc.)
+- Using bash to bypass the write limit will crash the on-premise server
+- Always use edit/write tools, chunked to ≤100 lines
+
 ## Commands
 
 | Command | Purpose |

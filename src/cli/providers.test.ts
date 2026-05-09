@@ -179,7 +179,8 @@ describe('providers', () => {
 
     const agents = (config.presets as any).openai;
     expect(agents.orchestrator.mcps).toEqual(['*', '!context7']);
-    expect(agents.explorer.mcps).toContain('websearch');
-    expect(agents.explorer.mcps).toContain('grep_app');
+    expect(agents.explorer.mcps).toEqual([]);
+    expect(agents.librarian.mcps).toContain('websearch');
+    expect(agents.librarian.mcps).toContain('grep_app');
   });
 });

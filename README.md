@@ -6,10 +6,11 @@ Agent orchestration plugin for on-premise models (Qwen3.5, Minimax). Fork of oh-
 
 | Agent | Role | Default Model |
 |-------|------|---------------|
-| **orchestrator** | Plans and delegates. Does NOT write code. | `onprem/qwen3.5-397b` |
-| **explorer** | Searches codebase (glob, grep, AST). Read-only. | `onprem/minimax-2.5` |
-| **fixer** | Implements changes. Follows instructions exactly. | `onprem/minimax-2.5` |
-| **oracle** | Strategic advice, code review, debugging. Read-only. | `onprem/qwen3.5-397b` |
+| **orchestrator** | Plans and delegates. Does NOT write code. | `codemate/DSllmOCoder` |
+| **explorer** | Searches codebase (glob, grep, AST). Read-only. | `codemate/DSllmOCoderStable` |
+| **librarian** | External docs and company code search (web, GitHub, internal). | `codemate/DSllmOCoderStable` |
+| **fixer** | Implements changes. Follows instructions exactly. | `codemate/DSllmOCoderStable` |
+| **oracle** | Strategic advice, code review, debugging. Read-only. | `codemate/DSllmOCoder` |
 
 ## Installation (for AI agents)
 
@@ -24,8 +25,9 @@ bun --version
 Must be **bun v1.1.x** — v1.2+ has a WSL UNC path bug. If on WSL and bun v1.2+ is installed:
 ```bash
 curl -fsSL -o /tmp/bun.zip https://github.com/oven-sh/bun/releases/download/bun-v1.1.38/bun-linux-x64.zip
-unzip -o /tmp/bun.zip -d /tmp/bun-old && mkdir -p ~/.opencode/bin
-cp /tmp/bun-old/bun-linux-x64/bun ~/.opencode/bin/bun && chmod +x ~/.opencode/bin/bun
+unzip -o /tmp/bun.zip -d /tmp/bun-old && mkdir -p oh-my-opencode-air/.air/bin
+cp /tmp/bun-old/bun-linux-x64/bun oh-my-opencode-air/.air/bin/bun && chmod +x oh-my-opencode-air/.air/bin/bun
+export PATH="./.air/bin:$PATH"
 ```
 
 If bun is not installed at all:
@@ -66,15 +68,16 @@ Create the file `~/.config/opencode/oh-my-opencode-air.json`:
 ```json
 {
   "agents": {
-    "orchestrator": { "model": "onprem/qwen3.5-397b" },
-    "oracle": { "model": "onprem/qwen3.5-397b" },
-    "explorer": { "model": "onprem/minimax-2.5" },
-    "fixer": { "model": "onprem/minimax-2.5" }
+    "orchestrator": { "model": "codemate/DSllmOCoder" },
+    "oracle": { "model": "codemate/DSllmOCoder" },
+    "explorer": { "model": "codemate/DSllmOCoderStable" },
+    "librarian": { "model": "codemate/DSllmOCoderStable" },
+    "fixer": { "model": "codemate/DSllmOCoderStable" }
   }
 }
 ```
 
-Note: Replace `onprem/qwen3.5-397b` and `onprem/minimax-2.5` with the actual model identifiers available in your OpenCode provider configuration.
+Note: Replace `codemate/DSllmOCoder` and `codemate/DSllmOCoderStable` with the actual model identifiers available in your OpenCode provider configuration.
 
 ### Step 5: Verify installation
 
@@ -83,7 +86,7 @@ Run OpenCode and test:
 ping all agents
 ```
 
-All 4 agents (orchestrator, explorer, fixer, oracle) should respond.
+All 5 agents (orchestrator, explorer, librarian, fixer, oracle) should respond.
 
 ## Configuration
 
@@ -95,6 +98,7 @@ Edit `~/.config/opencode/oh-my-opencode-air.json` to customize:
     "orchestrator": { "model": "your-provider/qwen3.5-397b", "temperature": 0.1 },
     "oracle": { "model": "your-provider/qwen3.5-397b", "temperature": 0.1 },
     "explorer": { "model": "your-provider/minimax-2.5", "temperature": 0.1 },
+    "librarian": { "model": "your-provider/minimax-2.5", "temperature": 0.1 },
     "fixer": { "model": "your-provider/minimax-2.5", "temperature": 0.2 }
   }
 }
@@ -109,7 +113,7 @@ export DS_SEARCH_URL="http://your-internal-server:8080/mcp"
 export DS_SEARCH_API_KEY="your-token"
 ```
 
-The explorer agent will automatically use it for code search.
+The librarian agent will automatically use it for external code search.
 
 ## 100-Line Write Constraint
 
@@ -137,7 +141,7 @@ bun run check        # Lint + format
 
 ```
 src/
-├── agents/       # Agent factories (orchestrator, explorer, oracle, fixer)
+├── agents/       # Agent factories (orchestrator, explorer, oracle, fixer, librarian)
 ├── cli/          # CLI entry point
 ├── config/       # Constants, schemas
 ├── hooks/        # Lifecycle hooks (including write-constraint)

@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { chmod, mkdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 import { parsePatch } from './codec';
@@ -7,11 +8,13 @@ import { createApplyPatchHook } from './index';
 import { applyPreparedChanges, preparePatchChanges } from './operations';
 import { createTempDir, DEFAULT_OPTIONS, writeFixture } from './test-helpers';
 
+const hookRoot = path.join(tmpdir(), 'hook-root');
+
 function createHook() {
   return createApplyPatchHook({
     client: {} as never,
-    directory: '/tmp/hook-root',
-    worktree: '/tmp/hook-root',
+    directory: hookRoot,
+    worktree: hookRoot,
   } as never);
 }
 

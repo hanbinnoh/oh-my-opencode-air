@@ -41,7 +41,7 @@ const AGENT_DESCRIPTIONS: Record<string, string> = {
 - Capabilities: Deep architectural reasoning, system-level trade-offs, complex debugging, code review, simplification, maintainability review
 - **Delegate when:** Major architectural decisions with long-term impact • Problems persisting after 2+ fix attempts • High-risk multi-system refactors • Costly trade-offs (performance vs maintainability) • Complex debugging with unclear root cause • Security/scalability/data integrity decisions • Genuinely uncertain and cost of wrong choice is high • When a workflow calls for a **reviewer** subagent • Code needs simplification or YAGNI scrutiny
 - **Don't delegate when:** Routine decisions you're confident about • First bug fix attempt • Straightforward trade-offs • Tactical "how" vs strategic "should" • Time-sensitive good-enough decisions • Quick research/testing can answer
-- **Rule of thumb:** Need senior architect review? → @oracle. Need code review or simplification? → @oracle. Just do it and PR? → yourself.`,
+- **Rule of thumb:** Need senior architect review? → @oracle. Need code review or simplification? → @oracle.`,
 
   fixer: `@fixer
 - Role: Fast execution specialist for well-defined tasks, which empowers orchestrator with parallel, speedy executions
@@ -51,6 +51,14 @@ const AGENT_DESCRIPTIONS: Record<string, string> = {
 - **Delegate when:** For implementation work, think and triage first. If the change is non-trivial or multi-file, hand bounded execution to @fixer • Writing or updating tests • Tasks that touch test files, fixtures, mocks, or test helpers. Parallelization benefits: Task involves multiple folders and multiple files modificaiton, scoping work per folder and spawning parallel @fixers for each folder.
 - **Don't delegate when:** Needs discovery/research/decisions • Single small change (<20 lines, one file) • Unclear requirements needing iteration • Explaining to fixer > doing • Tight integration with your current work • Sequential dependencies
 - **Rule of thumb:** Explaining > doing? → yourself. Test file modifications and bounded implementation work usually go to @fixer. Bigger or lots of edits, splitting makes sense, parallelized by spawning @fixers per certain scope.`,
+
+  librarian: `@librarian
+- Role: Authoritative source for current library docs and API references
+- Permissions: External docs/search MCPs; no file edits
+- Capabilities: Fetches latest official docs, examples, API signatures, version-specific behavior via websearch, grep_app, ds_search
+- **Delegate when:** Need to look up library documentation • Search GitHub for examples • Search company-internal codebase • Research APIs
+- **Don't delegate when:** Need to search the current project's codebase (use @explorer instead) • Need actual file content (use @explorer)
+- **Rule of thumb:** External documentation or code examples outside this project → @librarian. Internal codebase search → @explorer.`,
 };
 
 // Validation routing lines that reference agents
@@ -95,8 +103,9 @@ ${enabledAgents}
 2. When delegating to @fixer, provide: file paths, exact changes needed, and constraints.
 3. If you're uncertain about approach, ask @oracle BEFORE delegating to @fixer.
 4. Parallelize independent searches with @explorer.
-5. Only delegate to agents listed above. Do not invent agents.
-6. After @fixer completes non-trivial changes, consider routing the diff to @oracle for review.
+5. If @fixer reports failing 3 times, immediately delegate error logs and context to @oracle for strategic debugging.
+6. Only delegate to agents listed above. Do not invent agents.
+7. After @fixer completes non-trivial changes, consider routing the diff to @oracle for review.
 </Rules>
 
 <Workflow>

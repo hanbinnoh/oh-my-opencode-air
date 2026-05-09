@@ -1,4 +1,8 @@
 import { afterEach, beforeEach, describe, expect, mock, test } from 'bun:test';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+const testInstallDir = join(tmpdir(), 'opencode');
 
 const logMock = mock(() => {});
 
@@ -12,8 +16,8 @@ const checkerMocks = {
 };
 
 const cacheMocks = {
-  preparePackageUpdate: mock(() => '/tmp/opencode'),
-  resolveInstallContext: mock(() => ({ installDir: '/tmp/opencode' })),
+  preparePackageUpdate: mock(() => testInstallDir),
+  resolveInstallContext: mock(() => ({ installDir: testInstallDir })),
 };
 
 const crossSpawnMock = mock((_command: string[]) => ({
@@ -88,10 +92,10 @@ describe('auto-update-checker/index', () => {
     checkerMocks.getLocalDevVersion.mockImplementation(() => null);
 
     cacheMocks.preparePackageUpdate.mockReset();
-    cacheMocks.preparePackageUpdate.mockImplementation(() => '/tmp/opencode');
+    cacheMocks.preparePackageUpdate.mockImplementation(() => testInstallDir);
     cacheMocks.resolveInstallContext.mockReset();
     cacheMocks.resolveInstallContext.mockImplementation(() => ({
-      installDir: '/tmp/opencode',
+      installDir: testInstallDir,
     }));
 
     crossSpawnMock.mockReset();
@@ -114,7 +118,7 @@ describe('auto-update-checker/index', () => {
       `./index?test=${importCounter++}`
     );
 
-    expect(getAutoUpdateInstallDir()).toBe('/tmp/opencode');
+    expect(getAutoUpdateInstallDir()).toBe(testInstallDir);
   });
 
   test('skips background update for local dev installs without startup toast', async () => {
@@ -166,7 +170,7 @@ describe('auto-update-checker/index', () => {
     );
     expect(crossSpawnMock).toHaveBeenCalledWith(
       ['bun', 'install'],
-      expect.objectContaining({ cwd: '/tmp/opencode' }),
+      expect.objectContaining({ cwd: testInstallDir }),
     );
     expect(showToast).toHaveBeenCalledWith({
       body: {
@@ -267,7 +271,7 @@ describe('auto-update-checker/index', () => {
 
     expect(crossSpawnMock).toHaveBeenCalledWith(
       ['bun', 'install'],
-      expect.objectContaining({ cwd: '/tmp/opencode' }),
+      expect.objectContaining({ cwd: testInstallDir }),
     );
     expect(showToast).toHaveBeenCalledWith({
       body: {

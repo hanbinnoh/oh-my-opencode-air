@@ -307,9 +307,9 @@ describe('createAgents', () => {
     expect(names).toContain('fixer');
   });
 
-  test('creates exactly 4 agents by default', () => {
+  test('creates exactly 5 agents by default', () => {
     const agents = createAgents();
-    expect(agents.length).toBe(4);
+    expect(agents.length).toBe(5);
   });
 });
 
@@ -619,13 +619,13 @@ describe('disabled_agents', () => {
 
   test('agent count decreases when agents are disabled', () => {
     const agents = createAgents();
-    expect(agents.length).toBe(4);
+    expect(agents.length).toBe(5);
 
     const disabledConfig: PluginConfig = {
       disabled_agents: ['oracle', 'fixer'],
     };
     const disabledAgents = createAgents(disabledConfig);
-    expect(disabledAgents.length).toBe(2); // orchestrator + explorer
+    expect(disabledAgents.length).toBe(3); // orchestrator + explorer + librarian
   });
 
   test('getDisabledAgents respects protection rules', () => {

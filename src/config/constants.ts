@@ -3,7 +3,12 @@ export const AGENT_ALIASES: Record<string, string> = {
   explore: 'explorer',
 };
 
-export const SUBAGENT_NAMES = ['explorer', 'oracle', 'fixer'] as const;
+export const SUBAGENT_NAMES = [
+  'explorer',
+  'oracle',
+  'fixer',
+  'librarian',
+] as const;
 
 export const ORCHESTRATOR_NAME = 'orchestrator' as const;
 
@@ -17,7 +22,12 @@ export type AgentName = (typeof ALL_AGENT_NAMES)[number];
 // fixer: leaf node — prompt forbids delegation; use grep/glob for lookups
 // Unknown agent types not listed here default to explorer-only access
 // Which agents each agent type can spawn via delegation.
-export const ORCHESTRATABLE_AGENTS = ['explorer', 'oracle', 'fixer'] as const;
+export const ORCHESTRATABLE_AGENTS = [
+  'explorer',
+  'oracle',
+  'fixer',
+  'librarian',
+] as const;
 
 /** Agents that cannot be disabled even if listed in disabled_agents config. */
 export const PROTECTED_AGENTS = new Set(['orchestrator']);
@@ -37,15 +47,17 @@ export const SUBAGENT_DELEGATION_RULES: Record<AgentName, readonly string[]> = {
   fixer: [],
   explorer: [],
   oracle: [],
+  librarian: [],
 };
 
 // Default models for each agent
 // orchestrator is undefined so its model is fully resolved at runtime via priority fallback
 export const DEFAULT_MODELS: Record<AgentName, string | undefined> = {
   orchestrator: undefined,
-  oracle: 'onprem/qwen3.5-397b',
-  explorer: 'onprem/minimax-2.5',
-  fixer: 'onprem/minimax-2.5',
+  oracle: 'codemate/DSllmOCoder',
+  explorer: 'codemate/DSllmOCoderStable',
+  fixer: 'codemate/DSllmOCoderStable',
+  librarian: 'codemate/DSllmOCoderStable',
 };
 
 // Polling configuration

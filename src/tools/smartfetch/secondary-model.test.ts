@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, mock, test } from 'bun:test';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { runSecondaryModelWithFallback } from './secondary-model';
 import type { SecondaryModel } from './types';
 
@@ -51,7 +53,7 @@ describe('smartfetch/secondary-model', () => {
 
     const result = await runSecondaryModelWithFallback(
       client,
-      '/tmp/project',
+      join(tmpdir(), 'project'),
       models,
       'Summarize the page',
       'This is enough fetched content to clear the short-content guard.',
@@ -71,7 +73,7 @@ describe('smartfetch/secondary-model', () => {
 
     const result = await runSecondaryModelWithFallback(
       client,
-      '/tmp/project',
+      join(tmpdir(), 'project'),
       models,
       'Extract the answer',
       'This is enough fetched content to clear the short-content guard.',

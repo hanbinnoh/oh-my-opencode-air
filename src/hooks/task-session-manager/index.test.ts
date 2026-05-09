@@ -1,5 +1,9 @@
 import { describe, expect, mock, test } from 'bun:test';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { createTaskSessionManagerHook } from './index';
+
+const testDir = tmpdir();
 
 function createHook(options?: {
   shouldManageSession?: (sessionID: string) => boolean;
@@ -9,8 +13,8 @@ function createHook(options?: {
   const hook = createTaskSessionManagerHook(
     {
       client: { session: { status: mock(async () => ({ data: {} })) } },
-      directory: '/tmp',
-      worktree: '/tmp',
+      directory: testDir,
+      worktree: testDir,
     } as never,
     {
       maxSessionsPerAgent: 2,
@@ -148,14 +152,14 @@ describe('task-session-manager hook', () => {
       },
       {
         output: [
-          '<path>/tmp/src/index.ts</path>',
+          `<path>${join(testDir, 'src', 'index.ts')}</path>`,
           '<type>file</type>',
           '<content>',
           ...Array.from({ length: 12 }, (_, index) => `${index + 1}: line`),
           '</content>',
         ].join('\n'),
         metadata: {
-          loaded: ['/tmp/AGENTS.md'],
+          loaded: [join(testDir, 'AGENTS.md')],
         },
       },
     );
@@ -209,7 +213,7 @@ describe('task-session-manager hook', () => {
       { tool: 'read', sessionID: 'child-1', callID: 'read-1' },
       {
         output: [
-          '<path>/tmp/src/small.ts</path>',
+          `<path>${join(testDir, 'src', 'small.ts')}</path>`,
           '<content>',
           ...Array.from({ length: 4 }, (_, index) => `${index + 1}: line`),
           '</content>',
@@ -220,7 +224,7 @@ describe('task-session-manager hook', () => {
       { tool: 'read', sessionID: 'child-1', callID: 'read-2' },
       {
         output: [
-          '<path>/tmp/src/large.ts</path>',
+          `<path>${join(testDir, 'src', 'large.ts')}</path>`,
           '<content>',
           ...Array.from({ length: 7 }, (_, index) => `${index + 1}: line`),
           '</content>',
@@ -231,7 +235,7 @@ describe('task-session-manager hook', () => {
       { tool: 'read', sessionID: 'child-1', callID: 'read-3' },
       {
         output: [
-          '<path>/tmp/src/large.ts</path>',
+          `<path>${join(testDir, 'src', 'large.ts')}</path>`,
           '<content>',
           ...Array.from({ length: 5 }, (_, index) => `${index + 8}: line`),
           '</content>',
@@ -273,7 +277,7 @@ describe('task-session-manager hook', () => {
         { tool: 'read', sessionID: 'child-1', callID: call },
         {
           output: [
-            '<path>/tmp/src/repeat.ts</path>',
+            `<path>${join(testDir, 'src', 'repeat.ts')}</path>`,
             '<content>',
             ...Array.from({ length: 12 }, (_, index) => `${index + 1}: line`),
             '</content>',
@@ -323,7 +327,7 @@ describe('task-session-manager hook', () => {
         { tool: 'read', sessionID: 'child-1', callID: `read-${file}` },
         {
           output: [
-            `<path>/tmp/src/${file}</path>`,
+            `<path>${join(testDir, 'src', file)}</path>`,
             '<content>',
             ...Array.from({ length: lines }, (_, line) => `${line + 1}: line`),
             '</content>',
@@ -368,7 +372,7 @@ describe('task-session-manager hook', () => {
       { tool: 'read', sessionID: 'child-1', callID: 'read-1' },
       {
         output: [
-          '<path>/tmp/src/index.ts</path>',
+          `<path>${join(testDir, 'src', 'index.ts')}</path>`,
           '<content>',
           ...Array.from({ length: 12 }, (_, index) => `${index + 1}: line`),
           '</content>',
@@ -412,7 +416,7 @@ describe('task-session-manager hook', () => {
         { tool: 'read', sessionID: `child-${index}`, callID: `read-${index}` },
         {
           output: [
-            `<path>/tmp/src/file-${index}.ts</path>`,
+            `<path>${join(testDir, 'src', `file-${index}.ts`)}</path>`,
             '<content>',
             ...Array.from({ length: 12 }, (_, line) => `${line + 1}: line`),
             '</content>',

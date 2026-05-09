@@ -1,4 +1,6 @@
 import { describe, expect, test } from 'bun:test';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import type { PluginInput } from '@opencode-ai/plugin';
 import type { PluginConfig } from '../../config';
 import {
@@ -9,10 +11,11 @@ import {
 const mockCtx = {} as PluginInput;
 
 function skillBlock(name: string): string {
+  const locationPath = join(tmpdir(), name).replace(/\\/g, '/');
   return `<skill>
   <name>${name}</name>
   <description>${name} description</description>
-  <location>file:///tmp/${name}</location>
+  <location>file:///${locationPath}</location>
 </skill>`;
 }
 

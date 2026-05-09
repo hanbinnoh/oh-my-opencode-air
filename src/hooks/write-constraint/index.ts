@@ -52,7 +52,8 @@ export function createWriteConstraintHook() {
       if (lineCount > MAX_LINES_PER_WRITE) {
         throw new Error(
           `[write-constraint] Rejected: ${lineCount} lines exceeds ${MAX_LINES_PER_WRITE}-line limit. ` +
-            `Split into multiple tool calls of ≤${MAX_LINES_PER_WRITE} lines each. ` +
+            `Split into multiple edit calls targeting chunks. ` +
+            `Example: use 'edit' for lines 1-75, then another 'edit' for lines 76-150. ` +
             `This is a hard server constraint — violating it causes an infinite loop.`,
         );
       }

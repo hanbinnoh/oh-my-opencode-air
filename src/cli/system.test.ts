@@ -22,6 +22,7 @@ describe('system', () => {
     const dir = mkdtempSync(join(tmpdir(), 'opencode-system-test-'));
     const originalPath = process.env.PATH;
     const originalHome = process.env.HOME;
+    const originalUserProfile = process.env.USERPROFILE;
 
     try {
       const opencodePath = join(dir, '.opencode', 'bin', 'opencode');
@@ -29,12 +30,14 @@ describe('system', () => {
       writeFileSync(opencodePath, '#!/bin/sh\necho 1.2.3\n');
       chmodSync(opencodePath, 0o755);
       process.env.HOME = dir;
+      process.env.USERPROFILE = dir;
       process.env.PATH = '/usr/bin:/bin:/usr/sbin:/sbin';
 
       expect(await isOpenCodeInstalled()).toBe(true);
     } finally {
       process.env.PATH = originalPath;
       process.env.HOME = originalHome;
+      process.env.USERPROFILE = originalUserProfile;
       rmSync(dir, { recursive: true, force: true });
     }
   });

@@ -15,30 +15,35 @@ export const MODEL_MAPPINGS = {
     oracle: { model: 'openai/gpt-5.5', variant: 'high' },
     explorer: { model: 'openai/gpt-5.4-mini', variant: 'low' },
     fixer: { model: 'openai/gpt-5.4-mini', variant: 'low' },
+    librarian: { model: 'openai/gpt-5.4-mini', variant: 'low' },
   },
   kimi: {
     orchestrator: { model: 'kimi-for-coding/k2p5' },
     oracle: { model: 'kimi-for-coding/k2p5', variant: 'high' },
     explorer: { model: 'kimi-for-coding/k2p5', variant: 'low' },
     fixer: { model: 'kimi-for-coding/k2p5', variant: 'low' },
+    librarian: { model: 'kimi-for-coding/k2p5', variant: 'low' },
   },
   copilot: {
     orchestrator: { model: 'github-copilot/claude-opus-4.6' },
     oracle: { model: 'github-copilot/claude-opus-4.6', variant: 'high' },
     explorer: { model: 'github-copilot/grok-code-fast-1', variant: 'low' },
     fixer: { model: 'github-copilot/claude-sonnet-4.6', variant: 'low' },
+    librarian: { model: 'github-copilot/grok-code-fast-1', variant: 'low' },
   },
   'zai-plan': {
     orchestrator: { model: 'zai-coding-plan/glm-5' },
     oracle: { model: 'zai-coding-plan/glm-5', variant: 'high' },
     explorer: { model: 'zai-coding-plan/glm-5', variant: 'low' },
     fixer: { model: 'zai-coding-plan/glm-5', variant: 'low' },
+    librarian: { model: 'zai-coding-plan/glm-5', variant: 'low' },
   },
   'opencode-go': {
     orchestrator: { model: 'opencode-go/glm-5.1' },
     oracle: { model: 'opencode-go/deepseek-v4-pro', variant: 'max' },
     explorer: { model: 'opencode-go/minimax-m2.7' },
     fixer: { model: 'opencode-go/deepseek-v4-flash', variant: 'high' },
+    librarian: { model: 'opencode-go/minimax-m2.7' },
   },
 } as const;
 

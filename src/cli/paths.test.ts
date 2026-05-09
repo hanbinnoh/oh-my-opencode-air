@@ -17,6 +17,8 @@ import {
 
 describe('paths', () => {
   const originalEnv = { ...process.env };
+  const xdgConfigDir = join(tmpdir(), 'xdg-config');
+  const opencodeConfigDir = join(xdgConfigDir, 'opencode');
 
   beforeEach(() => {
     delete process.env.OPENCODE_CONFIG_DIR;
@@ -34,8 +36,8 @@ describe('paths', () => {
 
   test('getConfigDir() uses XDG_CONFIG_HOME when set', () => {
     delete process.env.OPENCODE_CONFIG_DIR;
-    process.env.XDG_CONFIG_HOME = '/tmp/xdg-config';
-    expect(getConfigDir()).toBe('/tmp/xdg-config/opencode');
+    process.env.XDG_CONFIG_HOME = xdgConfigDir;
+    expect(getConfigDir()).toBe(opencodeConfigDir);
   });
 
   test('getConfigDir() falls back to ~/.config when XDG_CONFIG_HOME is unset', () => {
@@ -47,52 +49,52 @@ describe('paths', () => {
 
   test('getConfigSearchDirs() returns custom dir first, then default dir', () => {
     process.env.OPENCODE_CONFIG_DIR = '/custom/directory';
-    process.env.XDG_CONFIG_HOME = '/tmp/xdg-config';
+    process.env.XDG_CONFIG_HOME = xdgConfigDir;
 
     expect(getConfigSearchDirs()).toEqual([
       '/custom/directory',
-      '/tmp/xdg-config/opencode',
+      opencodeConfigDir,
     ]);
   });
 
   test('getConfigSearchDirs() de-duplicates identical dirs', () => {
-    process.env.OPENCODE_CONFIG_DIR = '/tmp/xdg-config/opencode';
-    process.env.XDG_CONFIG_HOME = '/tmp/xdg-config';
+    process.env.OPENCODE_CONFIG_DIR = opencodeConfigDir;
+    process.env.XDG_CONFIG_HOME = xdgConfigDir;
 
-    expect(getConfigSearchDirs()).toEqual(['/tmp/xdg-config/opencode']);
+    expect(getConfigSearchDirs()).toEqual([opencodeConfigDir]);
   });
 
   test('getOpenCodeConfigPaths() returns both json and jsonc paths', () => {
-    process.env.XDG_CONFIG_HOME = '/tmp/xdg-config';
+    process.env.XDG_CONFIG_HOME = xdgConfigDir;
     expect(getOpenCodeConfigPaths()).toEqual([
-      '/tmp/xdg-config/opencode/opencode.json',
-      '/tmp/xdg-config/opencode/opencode.jsonc',
+      join(opencodeConfigDir, 'opencode.json'),
+      join(opencodeConfigDir, 'opencode.jsonc'),
     ]);
   });
 
   test('getOpenCodeConfigPaths() ignores OPENCODE_CONFIG_DIR', () => {
     process.env.OPENCODE_CONFIG_DIR = '/custom/directory';
-    process.env.XDG_CONFIG_HOME = '/tmp/xdg-config';
+    process.env.XDG_CONFIG_HOME = xdgConfigDir;
     expect(getOpenCodeConfigPaths()).toEqual([
-      '/tmp/xdg-config/opencode/opencode.json',
-      '/tmp/xdg-config/opencode/opencode.jsonc',
+      join(opencodeConfigDir, 'opencode.json'),
+      join(opencodeConfigDir, 'opencode.jsonc'),
     ]);
   });
 
   test('getConfigJson() returns correct path', () => {
-    process.env.XDG_CONFIG_HOME = '/tmp/xdg-config';
-    expect(getConfigJson()).toBe('/tmp/xdg-config/opencode/opencode.json');
+    process.env.XDG_CONFIG_HOME = xdgConfigDir;
+    expect(getConfigJson()).toBe(join(opencodeConfigDir, 'opencode.json'));
   });
 
   test('getConfigJsonc() returns correct path', () => {
-    process.env.XDG_CONFIG_HOME = '/tmp/xdg-config';
-    expect(getConfigJsonc()).toBe('/tmp/xdg-config/opencode/opencode.jsonc');
+    process.env.XDG_CONFIG_HOME = xdgConfigDir;
+    expect(getConfigJsonc()).toBe(join(opencodeConfigDir, 'opencode.jsonc'));
   });
 
   test('getLiteConfig() returns correct path', () => {
-    process.env.XDG_CONFIG_HOME = '/tmp/xdg-config';
+    process.env.XDG_CONFIG_HOME = xdgConfigDir;
     expect(getLiteConfig()).toBe(
-      '/tmp/xdg-config/opencode/oh-my-opencode-air.json',
+      join(opencodeConfigDir, 'oh-my-opencode-air.json'),
     );
   });
 
