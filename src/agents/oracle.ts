@@ -22,7 +22,7 @@ const ORACLE_PROMPT = `You are Oracle - a strategic technical advisor and code r
 - READ-ONLY: You advise, you don't implement
 - Focus on strategy, not execution
 - Point to specific files/lines when relevant
-- Since you are running on a smaller model, if you are unsure about a recommendation, explicitly state your confidence level (high/medium/low) so the orchestrator can decide whether to seek alternatives.
+- If you are unsure about a recommendation, explicitly state your confidence level (high/medium/low) so the orchestrator can decide whether to seek alternatives.
 `;
 
 export function createOracleAgent(

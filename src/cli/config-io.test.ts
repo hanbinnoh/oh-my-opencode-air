@@ -393,7 +393,7 @@ describe('config-io', () => {
     expect(saved.plugin.length).toBe(3);
   });
 
-  test('writeLiteConfig writes lite config with OpenAI preset', () => {
+  test('writeLiteConfig writes lite config with all agents and tmux', () => {
     const litePath = join(tmpDir, 'opencode', 'oh-my-opencode-air.json');
     paths.ensureConfigDir();
 
@@ -409,13 +409,19 @@ describe('config-io', () => {
     expect(saved.$schema).toBe(
       'https://unpkg.com/oh-my-opencode-air@latest/oh-my-opencode-air.schema.json',
     );
-    expect(saved.preset).toBe('openai');
-    expect(saved.presets.openai).toBeDefined();
-    expect(saved.presets['opencode-go']).toBeDefined();
+    expect(saved.disabled_agents).toEqual([]);
+    expect(saved.agents).toBeDefined();
+    expect(Object.keys(saved.agents)).toEqual([
+      'orchestrator',
+      'oracle',
+      'explorer',
+      'librarian',
+      'fixer',
+    ]);
     expect(saved.tmux.enabled).toBe(true);
   });
 
-  test('writeLiteConfig writes selected preset', () => {
+  test('writeLiteConfig writes on-prem config', () => {
     const litePath = join(tmpDir, 'opencode', 'oh-my-opencode-air.json');
     paths.ensureConfigDir();
 
@@ -423,18 +429,17 @@ describe('config-io', () => {
       hasTmux: false,
       installSkills: false,
       installCustomSkills: false,
-      preset: 'opencode-go',
       reset: false,
     });
     expect(result.success).toBe(true);
 
     const saved = JSON.parse(readFileSync(litePath, 'utf-8'));
-    expect(saved.preset).toBe('opencode-go');
-    expect(saved.disabled_agents).toEqual([]);
-    expect(saved.presets.openai).toBeDefined();
-    expect(saved.presets['opencode-go'].orchestrator.model).toBe(
-      'opencode-go/glm-5.1',
+    expect(saved.$schema).toBe(
+      'https://unpkg.com/oh-my-opencode-air@latest/oh-my-opencode-air.schema.json',
     );
+    expect(saved.disabled_agents).toEqual([]);
+    expect(saved.agents.orchestrator.model).toBe('codemate/DSllmOCoder');
+    expect(saved.agents.fixer.model).toBe('codemate/DSllmOCoderStable');
   });
 
   test('disableDefaultAgents disables explore and general agents', () => {
@@ -505,14 +510,11 @@ describe('config-io', () => {
     writeFileSync(
       litePath,
       JSON.stringify({
-        preset: 'openai',
-        presets: {
-          openai: {
-            orchestrator: { model: 'openai/gpt-4' },
-            oracle: { model: 'anthropic/claude-opus-4-6' },
-            explorer: { model: 'github-copilot/grok-code-fast-1' },
-            fixer: { model: 'zai-coding-plan/glm-4.7' },
-          },
+        agents: {
+          orchestrator: { model: 'codemate/DSllmOCoder' },
+          oracle: { model: 'codemate/DSllmOCoder' },
+          explorer: { model: 'codemate/DSllmOCoderStable' },
+          fixer: { model: 'codemate/DSllmOCoderStable' },
         },
         tmux: { enabled: true },
       }),
@@ -521,10 +523,10 @@ describe('config-io', () => {
     const detected = detectCurrentConfig();
     expect(detected.isInstalled).toBe(true);
     expect(detected.hasKimi).toBe(true);
-    expect(detected.hasOpenAI).toBe(true);
-    expect(detected.hasAnthropic).toBe(true);
-    expect(detected.hasCopilot).toBe(true);
-    expect(detected.hasZaiPlan).toBe(true);
+    expect(detected.hasOpenAI).toBe(false);
+    expect(detected.hasAnthropic).toBe(false);
+    expect(detected.hasCopilot).toBe(false);
+    expect(detected.hasZaiPlan).toBe(false);
     expect(detected.hasTmux).toBe(true);
   });
 

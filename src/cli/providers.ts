@@ -6,92 +6,20 @@ import type { InstallConfig } from './types';
 const SCHEMA_URL =
   'https://unpkg.com/oh-my-opencode-air@latest/oh-my-opencode-air.schema.json';
 
-export const GENERATED_PRESETS = ['openai', 'opencode-go'] as const;
-
-// Model mappings by provider/preset.
-export const MODEL_MAPPINGS = {
-  openai: {
-    orchestrator: { model: 'openai/gpt-5.5' },
-    oracle: { model: 'openai/gpt-5.5', variant: 'high' },
-    explorer: { model: 'openai/gpt-5.4-mini', variant: 'low' },
-    fixer: { model: 'openai/gpt-5.4-mini', variant: 'low' },
-    librarian: { model: 'openai/gpt-5.4-mini', variant: 'low' },
-  },
-  kimi: {
-    orchestrator: { model: 'kimi-for-coding/k2p5' },
-    oracle: { model: 'kimi-for-coding/k2p5', variant: 'high' },
-    explorer: { model: 'kimi-for-coding/k2p5', variant: 'low' },
-    fixer: { model: 'kimi-for-coding/k2p5', variant: 'low' },
-    librarian: { model: 'kimi-for-coding/k2p5', variant: 'low' },
-  },
-  copilot: {
-    orchestrator: { model: 'github-copilot/claude-opus-4.6' },
-    oracle: { model: 'github-copilot/claude-opus-4.6', variant: 'high' },
-    explorer: { model: 'github-copilot/grok-code-fast-1', variant: 'low' },
-    fixer: { model: 'github-copilot/claude-sonnet-4.6', variant: 'low' },
-    librarian: { model: 'github-copilot/grok-code-fast-1', variant: 'low' },
-  },
-  'zai-plan': {
-    orchestrator: { model: 'zai-coding-plan/glm-5' },
-    oracle: { model: 'zai-coding-plan/glm-5', variant: 'high' },
-    explorer: { model: 'zai-coding-plan/glm-5', variant: 'low' },
-    fixer: { model: 'zai-coding-plan/glm-5', variant: 'low' },
-    librarian: { model: 'zai-coding-plan/glm-5', variant: 'low' },
-  },
-  'opencode-go': {
-    orchestrator: { model: 'opencode-go/glm-5.1', variant: 'low' },
-    oracle: { model: 'opencode-go/deepseek-v4-pro', variant: 'high' },
-    explorer: { model: 'opencode-go/minimax-m2.7', variant: 'low' },
-    fixer: { model: 'opencode-go/deepseek-v4-flash', variant: 'low' },
-    librarian: { model: 'opencode-go/minimax-m2.7', variant: 'low' },
-  },
-} as const;
-
-export type PresetName = keyof typeof MODEL_MAPPINGS;
-export type GeneratedPresetName = (typeof GENERATED_PRESETS)[number];
-
-export function isPresetName(value: string): value is PresetName {
-  return Object.hasOwn(MODEL_MAPPINGS, value);
-}
-
-export function getPresetNames(): PresetName[] {
-  return Object.keys(MODEL_MAPPINGS) as PresetName[];
-}
-
-export function isGeneratedPresetName(
-  value: string,
-): value is GeneratedPresetName {
-  return GENERATED_PRESETS.includes(value as GeneratedPresetName);
-}
-
-export function getGeneratedPresetNames(): GeneratedPresetName[] {
-  return [...GENERATED_PRESETS];
-}
+// On-premise model configuration — single provider with two models.
+const ONPREM_MODELS: Record<string, { model: string; variant?: string }> = {
+  orchestrator: { model: 'codemate/DSllmOCoder', variant: 'low' },
+  oracle: { model: 'codemate/DSllmOCoder', variant: 'high' },
+  explorer: { model: 'codemate/DSllmOCoderStable', variant: 'low' },
+  librarian: { model: 'codemate/DSllmOCoderStable', variant: 'low' },
+  fixer: { model: 'codemate/DSllmOCoderStable', variant: 'low' },
+};
 
 export function generateLiteConfig(
   installConfig: InstallConfig,
 ): Record<string, unknown> {
-  const preset = installConfig.preset ?? 'openai';
-  if (!isGeneratedPresetName(preset)) {
-    throw new Error(
-      `Unsupported preset "${preset}". Available generated presets: ${getGeneratedPresetNames().join(', ')}`,
-    );
-  }
-
-  const config: Record<string, unknown> = {
-    $schema: SCHEMA_URL,
-    preset,
-    presets: {},
-  };
-
-  if (preset === 'opencode-go') {
-    config.disabled_agents = [];
-  }
-
-  const createAgentConfig = (
-    agentName: string,
-    modelInfo: { model: string; variant?: string },
-  ) => {
+  const createAgentConfig = (agentName: string) => {
+    const modelInfo = ONPREM_MODELS[agentName];
     const isOrchestrator = agentName === 'orchestrator';
 
     const skills = isOrchestrator
@@ -118,20 +46,18 @@ export function generateLiteConfig(
     };
   };
 
-  const buildPreset = (mappingName: PresetName) => {
-    const mapping = MODEL_MAPPINGS[mappingName];
-    return Object.fromEntries(
-      Object.entries(mapping).map(([agentName, modelInfo]) => [
-        agentName,
-        createAgentConfig(agentName, modelInfo),
-      ]),
-    );
-  };
+  const agents = Object.fromEntries(
+    Object.keys(ONPREM_MODELS).map((agentName) => [
+      agentName,
+      createAgentConfig(agentName),
+    ]),
+  );
 
-  const presets = config.presets as Record<string, unknown>;
-  for (const presetName of GENERATED_PRESETS) {
-    presets[presetName] = buildPreset(presetName);
-  }
+  const config: Record<string, unknown> = {
+    $schema: SCHEMA_URL,
+    agents,
+    disabled_agents: [],
+  };
 
   if (installConfig.hasTmux) {
     config.tmux = {

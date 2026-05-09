@@ -441,13 +441,11 @@ export function detectCurrentConfig(): DetectedConfig {
   result.hasChutes = !!providers?.chutes;
   if (providers?.google) result.hasAntigravity = true;
 
-  // Try to detect from lite config
+  // Check lite config for agents and tmux
   const { config: liteConfig } = parseConfig(getLiteConfig());
   if (liteConfig && typeof liteConfig === 'object') {
     const configObj = liteConfig as Record<string, unknown>;
-    const presetName = configObj.preset as string;
-    const presets = configObj.presets as Record<string, unknown>;
-    const agents = presets?.[presetName] as
+    const agents = configObj.agents as
       | Record<string, { model?: string }>
       | undefined;
 
@@ -455,11 +453,12 @@ export function detectCurrentConfig(): DetectedConfig {
       const models = Object.values(agents)
         .map((a) => a?.model)
         .filter(Boolean);
+      result.hasKimi = result.hasKimi || models.some((m) => m?.includes('kimi'));
       result.hasOpenAI = models.some((m) => m?.startsWith('openai/'));
       result.hasAnthropic = models.some((m) => m?.startsWith('anthropic/'));
       result.hasCopilot = models.some((m) => m?.startsWith('github-copilot/'));
       result.hasZaiPlan = models.some((m) => m?.startsWith('zai-coding-plan/'));
-      result.hasOpencodeZen = models.some((m) => m?.startsWith('opencode/'));
+      result.hasOpencodeZen = models.some((m) => m?.includes('opencode'));
       if (models.some((m) => m?.startsWith('google/'))) {
         result.hasAntigravity = true;
       }

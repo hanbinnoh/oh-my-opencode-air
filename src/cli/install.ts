@@ -305,17 +305,8 @@ async function runInstall(config: InstallConfig): Promise<number> {
   console.log(`     ${BLUE}> ping all agents${RESET}`);
   console.log();
 
-  const modelsInfo =
-    config.preset && config.preset !== 'openai'
-      ? `Generated OpenAI and OpenCode Go presets; ${config.preset} is active.`
-      : 'Generated OpenAI and OpenCode Go presets; OpenAI is active by default.';
-  console.log(`${modelsInfo}`);
-  const altProviders = 'For the full configuration reference, see:';
-  console.log(altProviders);
-  const docsUrl =
-    'https://github.com/hanbinnoh/oh-my-opencode-air/' +
-    'blob/master/docs/configuration.md';
-  console.log(`  ${BLUE}${docsUrl}${RESET}`);
+  console.log(`For the full configuration reference, see:`);
+  console.log(`  ${BLUE}${GITHUB_URL}${RESET}`);
   console.log();
 
   await askToStarRepo(config);
