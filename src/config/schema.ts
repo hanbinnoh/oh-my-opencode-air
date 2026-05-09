@@ -6,6 +6,7 @@ const FALLBACK_AGENT_NAMES = [
   'oracle',
   'explorer',
   'fixer',
+  'librarian',
 ] as const;
 
 const MANUAL_AGENT_NAMES = [
@@ -13,6 +14,7 @@ const MANUAL_AGENT_NAMES = [
   'oracle',
   'explorer',
   'fixer',
+  'librarian',
 ] as const;
 
 export const ProviderModelIdSchema = z
@@ -46,10 +48,11 @@ export const ManualAgentPlanSchema = z
 
 export const ManualPlanSchema = z
   .object({
-    orchestrator: ManualAgentPlanSchema,
-    oracle: ManualAgentPlanSchema,
-    explorer: ManualAgentPlanSchema,
-    fixer: ManualAgentPlanSchema,
+    orchestrator: ManualAgentPlanSchema.optional(),
+    oracle: ManualAgentPlanSchema.optional(),
+    explorer: ManualAgentPlanSchema.optional(),
+    fixer: ManualAgentPlanSchema.optional(),
+    librarian: ManualAgentPlanSchema.optional(),
   })
   .strict();
 
@@ -65,6 +68,7 @@ const FallbackChainsSchema = z
     oracle: AgentModelChainSchema.optional(),
     explorer: AgentModelChainSchema.optional(),
     fixer: AgentModelChainSchema.optional(),
+    librarian: AgentModelChainSchema.optional(),
   })
   .catchall(AgentModelChainSchema);
 

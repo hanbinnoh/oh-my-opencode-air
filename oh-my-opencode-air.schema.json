@@ -133,13 +133,41 @@
             "fallback2",
             "fallback3"
           ]
+        },
+        "librarian": {
+          "type": "object",
+          "properties": {
+            "primary": {
+              "type": "string",
+              "pattern": "^[^/\\s]+\\/[^\\s]+$"
+            },
+            "fallback1": {
+              "type": "string",
+              "pattern": "^[^/\\s]+\\/[^\\s]+$"
+            },
+            "fallback2": {
+              "type": "string",
+              "pattern": "^[^/\\s]+\\/[^\\s]+$"
+            },
+            "fallback3": {
+              "type": "string",
+              "pattern": "^[^/\\s]+\\/[^\\s]+$"
+            }
+          },
+          "required": [
+            "primary",
+            "fallback1",
+            "fallback2",
+            "fallback3"
+          ]
         }
       },
       "required": [
         "orchestrator",
         "oracle",
         "explorer",
-        "fixer"
+        "fixer",
+        "librarian"
       ],
       "additionalProperties": false
     },
@@ -496,6 +524,13 @@
               }
             },
             "fixer": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "librarian": {
               "minItems": 1,
               "type": "array",
               "items": {

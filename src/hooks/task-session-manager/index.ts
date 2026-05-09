@@ -29,6 +29,7 @@ const AGENT_NAME_SET = new Set<AgentName>([
   'oracle',
   'explorer',
   'fixer',
+  'librarian',
 ]);
 
 const MAX_PENDING_TASK_CALLS = 100;

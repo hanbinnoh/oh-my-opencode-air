@@ -66,6 +66,7 @@ const VALIDATION_ROUTING = [
   '- Route code review, simplification, maintainability review, and YAGNI checks to @oracle',
   '- Route test writing, test updates, and changes touching test files to @fixer',
   '- Route multi-file search and discovery to @explorer',
+  '- Route external documentation and API research to @librarian',
   '- If a request spans multiple lanes, delegate only the lanes that add clear value',
 ];
 

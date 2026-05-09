@@ -96,4 +96,4 @@ src/index.ts
 
 - `index.ts` (agent registry, overrides, classification, custom agents)
 - `orchestrator.ts` (base prompts, prompt resolution, model-array type)
-- `explorer.ts`, `oracle.ts`, `fixer.ts` (specialist factory prompts/config)
+- `explorer.ts`, `oracle.ts`, `fixer.ts`, `librarian.ts` (specialist factory prompts/config)
