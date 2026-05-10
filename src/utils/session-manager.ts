@@ -35,10 +35,10 @@ function aliasPrefix(agentType: AgentName): string {
       return 'ora';
     case 'fixer':
       return 'fix';
-    case 'orchestrator':
-      return 'orc';
     case 'librarian':
       return 'lib';
+    case 'orchestrator':
+      return 'orc';
   }
 }
 

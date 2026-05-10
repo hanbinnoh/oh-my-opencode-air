@@ -18,6 +18,7 @@ import {
   createApplyPatchHook,
   createAutoUpdateCheckerHook,
   createChatHeadersHook,
+  createContextBudgetHook,
   createDelegateTaskRetryHook,
   createFilterAvailableSkillsHook,
   createJsonErrorRecoveryHook,
@@ -122,6 +123,7 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
   let foregroundFallback: ForegroundFallbackManager;
   let todoContinuationHook: ReturnType<typeof createTodoContinuationHook>;
   let taskSessionManagerHook: ReturnType<typeof createTaskSessionManagerHook>;
+  let contextBudgetHook: ReturnType<typeof createContextBudgetHook>;
   let presetManager: ReturnType<typeof createPresetManager>;
   let webfetch: ReturnType<typeof createWebfetchTool>;
   let rewriteDisplayNameMentions: ReturnType<
@@ -288,6 +290,11 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
       readContextMaxFiles: config.sessionManager?.readContextMaxFiles ?? 8,
       shouldManageSession: (sessionID) =>
         sessionAgentMap.get(sessionID) === 'orchestrator',
+    });
+    contextBudgetHook = createContextBudgetHook({
+      enabled: config.contextBudget?.enabled ?? true,
+      modelLimits: config.contextBudget?.modelLimits,
+      log,
     });
     presetManager = createPresetManager(ctx, config);
 
@@ -760,6 +767,7 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
             model: `${info.providerID}/${info.modelID}`,
           });
         }
+        contextBudgetHook.recordModel(event);
       }
 
       if (event.type === 'session.created') {
@@ -808,6 +816,7 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
         }
         if (sessionID) {
           sessionAgentMap.delete(sessionID);
+          contextBudgetHook.clearSession(sessionID);
         }
       }
     },

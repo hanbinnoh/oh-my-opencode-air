@@ -19,12 +19,10 @@ Built-in Model Context Protocol (MCP) servers ship with oh-my-opencode-air and g
 | Agent | Default MCPs |
 |-------|-------------|
 | `orchestrator` | `*`, `!context7` |
-| `librarian` | `websearch`, `context7`, `grep_app` |
-| `designer` | none |
 | `oracle` | none |
-| `explorer` | none |
+| `explorer` | `websearch`, `grep_app`, `ds_search` |
 | `fixer` | none |
- | `councillor` | none |
+| `librarian` | `websearch`, `context7`, `grep_app`, `ds_search` |
 
 ---
 

@@ -552,6 +552,30 @@
           "type": "boolean"
         }
       }
+    },
+    "contextBudget": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "default": true,
+          "type": "boolean"
+        },
+        "charsPerToken": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "modelLimits": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "number",
+            "minimum": 1
+          }
+        }
+      }
     }
   },
   "title": "oh-my-opencode-air",

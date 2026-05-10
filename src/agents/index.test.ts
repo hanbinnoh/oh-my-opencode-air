@@ -259,10 +259,11 @@ describe('tool permissions', () => {
 });
 
 describe('isSubagent type guard', () => {
-  test('returns true for valid subagent names', () => {
+  test('returns true for all four subagent names', () => {
     expect(isSubagent('explorer')).toBe(true);
     expect(isSubagent('oracle')).toBe(true);
     expect(isSubagent('fixer')).toBe(true);
+    expect(isSubagent('librarian')).toBe(true);
   });
 
   test('returns false for orchestrator', () => {
@@ -567,7 +568,7 @@ describe('PluginConfigSchema custom-agent-only prompt fields', () => {
     expect(result.success).toBe(false);
   });
 
-  test('allows prompt fields on custom agents', () => {
+  test('rejects prompt fields on custom agents', () => {
     const result = PluginConfigSchema.safeParse({
       agents: {
         janitor: {
@@ -578,7 +579,7 @@ describe('PluginConfigSchema custom-agent-only prompt fields', () => {
       },
     });
 
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
   });
 
   test('accepts sessionManager config', () => {
@@ -648,7 +649,7 @@ describe('disabled_agents', () => {
     expect(enabled).toContain('explorer');
   });
 
-  test('getEnabledAgentNames includes enabled custom agents', () => {
+  test('getEnabledAgentNames does not include custom agents', () => {
     const config: PluginConfig = {
       disabled_agents: ['janitor'],
       agents: {
@@ -658,7 +659,163 @@ describe('disabled_agents', () => {
     };
 
     const enabled = getEnabledAgentNames(config);
-    expect(enabled).toContain('reviewer');
+    expect(enabled).not.toContain('reviewer');
     expect(enabled).not.toContain('janitor');
+  });
+});
+
+describe('agent factory boundary enforcement', () => {
+  test('creates exactly the 5 allowed built-in agents by default', () => {
+    const agents = createAgents();
+    const names = agents.map((a) => a.name).sort();
+    expect(names).toEqual([
+      'explorer',
+      'fixer',
+      'librarian',
+      'oracle',
+      'orchestrator',
+    ]);
+  });
+
+  test('each built-in agent has a defined config', () => {
+    const agents = createAgents();
+    for (const agent of agents) {
+      expect(agent.config).toBeDefined();
+      expect(agent.name).toBeDefined();
+    }
+  });
+
+  test('orchestrator is always first in the returned array', () => {
+    const agents = createAgents();
+    expect(agents[0].name).toBe('orchestrator');
+  });
+
+  test('subagents appear after orchestrator', () => {
+    const agents = createAgents();
+    const orchestratorIndex = agents.findIndex(
+      (a) => a.name === 'orchestrator',
+    );
+    expect(orchestratorIndex).toBe(0);
+    for (let i = 1; i < agents.length; i++) {
+      expect(agents[i].name).not.toBe('orchestrator');
+    }
+  });
+
+  test('all subagents have a defined default model', () => {
+    const agents = createAgents();
+    const subagents = agents.filter((a) => a.name !== 'orchestrator');
+    for (const agent of subagents) {
+      expect(agent.config.model).toBeDefined();
+      expect(typeof agent.config.model).toBe('string');
+    }
+  });
+
+  test('subagents use correct on-premise fallback models by default', () => {
+    const agents = createAgents();
+    const oracle = agents.find((a) => a.name === 'oracle');
+    const explorer = agents.find((a) => a.name === 'explorer');
+    const fixer = agents.find((a) => a.name === 'fixer');
+    const librarian = agents.find((a) => a.name === 'librarian');
+
+    expect(oracle?.config.model).toBe('onprem/qwen3.5-397b');
+    expect(explorer?.config.model).toBe('onprem/minimax-2.5');
+    expect(fixer?.config.model).toBe('onprem/minimax-2.5');
+    expect(librarian?.config.model).toBe('onprem/minimax-2.5');
+  });
+
+  test('orchestrator model is undefined by default (resolved at runtime)', () => {
+    const agents = createAgents();
+    const orchestrator = agents.find((a) => a.name === 'orchestrator');
+    expect(orchestrator?.config.model).toBeUndefined();
+  });
+
+  test('all agents have a prompt defined', () => {
+    const agents = createAgents();
+    for (const agent of agents) {
+      expect(agent.config.prompt).toBeDefined();
+      expect(typeof agent.config.prompt).toBe('string');
+      expect((agent.config.prompt as string).length).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe('custom agent boundary rules', () => {
+  test('custom agents are not allowed and throw an error', () => {
+    const config: PluginConfig = {
+      agents: {
+        reviewer: { model: 'openai/gpt-5.4-mini' },
+      },
+    };
+    expect(() => createAgents(config)).toThrow(
+      'Unauthorized agent type(s) detected: reviewer. Only orchestrator, explorer, fixer, oracle, and librarian are allowed in the air version.',
+    );
+  });
+
+  test('multiple custom agents throw an error with all names', () => {
+    const config: PluginConfig = {
+      agents: {
+        reviewer: { model: 'openai/gpt-5.4-mini' },
+        tester: { model: 'openai/gpt-5.4-mini' },
+      },
+    };
+    expect(() => createAgents(config)).toThrow(
+      'Unauthorized agent type(s) detected: reviewer, tester. Only orchestrator, explorer, fixer, oracle, and librarian are allowed in the air version.',
+    );
+  });
+
+  test('custom agent clashing with built-in name is not treated as custom', () => {
+    const config: PluginConfig = {
+      agents: {
+        oracle: { model: 'custom/oracle-model' },
+      },
+    };
+    const agents = createAgents(config);
+    const oracles = agents.filter((a) => a.name === 'oracle');
+    expect(oracles.length).toBe(1);
+    expect(oracles[0].config.model).toBe('custom/oracle-model');
+    expect(agents.length).toBe(5);
+  });
+
+  test('custom agent clashing with alias name is not treated as custom', () => {
+    const config: PluginConfig = {
+      agents: {
+        explore: { model: 'test/model' },
+      },
+    };
+    const agents = createAgents(config);
+    const explores = agents.filter((a) => a.name === 'explore');
+    expect(explores.length).toBe(0);
+    expect(agents.length).toBe(5);
+  });
+});
+
+describe('getDisabledAgents edge cases', () => {
+  test('empty disabled_agents array means no agents disabled', () => {
+    const config: PluginConfig = { disabled_agents: [] };
+    const disabled = getDisabledAgents(config);
+    expect(disabled.size).toBe(0);
+  });
+
+  test('undefined disabled_agents uses DEFAULT_DISABLED_AGENTS', () => {
+    const disabled = getDisabledAgents();
+    expect(disabled).toBeInstanceOf(Set);
+  });
+
+  test('cannot disable orchestrator even when explicitly listed', () => {
+    const config: PluginConfig = {
+      disabled_agents: ['orchestrator'],
+    };
+    const disabled = getDisabledAgents(config);
+    expect(disabled.has('orchestrator')).toBe(false);
+  });
+
+  test('can disable all non-protected subagents', () => {
+    const config: PluginConfig = {
+      disabled_agents: ['explorer', 'oracle', 'fixer', 'librarian'],
+    };
+    const agents = createAgents(config);
+    // Only orchestrator should remain
+    expect(agents.length).toBe(1);
+    expect(agents[0].name).toBe('orchestrator');
   });
 });

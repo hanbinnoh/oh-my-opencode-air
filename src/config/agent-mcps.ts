@@ -10,9 +10,9 @@ import {
 export const DEFAULT_AGENT_MCPS: Record<AgentName, string[]> = {
   orchestrator: ['*', '!context7'],
   oracle: [],
-  explorer: [], // internal code tools only (glob, grep, AST)
+  explorer: [],
   fixer: [],
-  librarian: ['websearch', 'grep_app', 'ds_search'], // external search
+  librarian: ['websearch', 'context7', 'grep_app', 'ds_search'],
 };
 
 /**

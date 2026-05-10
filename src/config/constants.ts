@@ -54,10 +54,10 @@ export const SUBAGENT_DELEGATION_RULES: Record<AgentName, readonly string[]> = {
 // orchestrator is undefined so its model is fully resolved at runtime via priority fallback
 export const DEFAULT_MODELS: Record<AgentName, string | undefined> = {
   orchestrator: undefined,
-  oracle: 'codemate/DSllmOCoder',
-  explorer: 'codemate/DSllmOCoderStable',
-  fixer: 'codemate/DSllmOCoderStable',
-  librarian: 'codemate/DSllmOCoderStable',
+  oracle: 'onprem/qwen3.5-397b',
+  explorer: 'onprem/minimax-2.5',
+  fixer: 'onprem/minimax-2.5',
+  librarian: 'onprem/minimax-2.5',
 };
 
 // Polling configuration

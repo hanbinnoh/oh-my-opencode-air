@@ -1,0 +1,1105 @@
+bun test v1.1.38 (bf2f153f)
+
+src/tui-state.test.ts:
+(pass) tui-state persistence > persists enabled agent models [0.38ms]
+(pass) tui-state persistence > updates a single live agent model without dropping others [0.16ms]
+(pass) tui-state persistence > ignores legacy config status fields in old snapshots [0.10ms]
+
+src/tui.test.ts:
+(pass) tui sidebar agents > hides disabled agents when models are persisted explicitly [0.10ms]
+(pass) tui sidebar agents > uses default-enabled fallback before models are persisted [0.03ms]
+(pass) formatSidebarModelName > keeps only the segment after the last slash [0.04ms]
+(pass) formatSidebarModelName > leaves model names without slashes unchanged [0.02ms]
+(pass) readConfigInvalid > detects invalid config from the current directory without persisted state [3.84ms]
+(pass) readConfigInvalid > returns false for valid config [0.47ms]
+
+src/config/model-resolution.test.ts:
+(pass) model array resolution > uses first model when no provider config exists [0.07ms]
+(pass) model array resolution > uses first model even when other providers are configured [0.09ms]
+(pass) model array resolution > returns null for empty model array [0.04ms]
+(pass) fallback.chains merging for foreground agents > primary model wins regardless of provider config [2.62ms]
+(pass) fallback.chains merging for foreground agents > chain is ignored when fallback disabled [0.03ms]
+(pass) fallback.chains merging for foreground agents > _modelArray entries take precedence and chain appends after [0.03ms]
+(pass) fallback.chains merging for foreground agents > duplicate model ids across array and chain are deduplicated [0.03ms]
+(pass) fallback.chains merging for foreground agents > no currentModel and no _modelArray with chain still resolves [0.02ms]
+(pass) fallback.chains merging for foreground agents > built-in provider not skipped when other providers are configured [0.02ms]
+
+src/config/utils.test.ts:
+(pass) getAgentOverride > reads override by explicit custom agent key [0.06ms]
+(pass) getAgentOverride > reads override from legacy alias when mapped [0.04ms]
+(pass) getAgentOverride > returns undefined when no override exists [0.02ms]
+(pass) getCustomAgentNames > returns only unknown non-alias agent keys [0.06ms]
+(pass) getCustomAgentNames > returns an empty list when no custom agents exist [0.05ms]
+
+src/config/runtime-preset.test.ts:
+(pass) runtime-preset > getActiveRuntimePreset returns null initially [0.03ms]
+(pass) runtime-preset > setActiveRuntimePreset sets the active preset [0.02ms]
+(pass) runtime-preset > setActiveRuntimePresetWithPrevious sets active and previous [0.03ms]
+(pass) runtime-preset > setActiveRuntimePresetWithPrevious with null sets previous to old [0.01ms]
+(pass) runtime-preset > rollbackRuntimePreset restores active and clears previous [0.02ms]
+(pass) runtime-preset > rollbackRuntimePreset with null clears active and previous [0.02ms]
+
+src/config/agent-mcps.test.ts:
+(pass) parseList > empty list returns empty array [0.06ms]
+(pass) parseList > wildcard includes all available [0.07ms]
+(pass) parseList > orchestrator wildcard excludes context7 but includes custom mcps [0.05ms]
+(pass) parseList > wildcard with exclusions [0.02ms]
+(pass) parseList > exclude wildcard returns empty [0.01ms]
+(pass) parseList > specific items only [0.02ms]
+(pass) parseList > specific items with exclusions [0.01ms]
+(pass) parseList > exclusions without matching allows [0.01ms]
+
+src/config/loader.test.ts:
+(pass) loadPluginConfig > returns empty config when no config files exist [0.07ms]
+(pass) loadPluginConfig > loads project config from .opencode directory [0.26ms]
+(pass) loadPluginConfig > loads scoringEngineVersion flag when configured [0.16ms]
+(pass) loadPluginConfig > loads balanceProviderUsage flag when configured [0.17ms]
+(pass) loadPluginConfig > loads autoUpdate flag when configured [0.14ms]
+(pass) loadPluginConfig > loads manual plan structure when configured [1.01ms]
+[oh-my-opencode-air] Invalid config at /tmp/loader-test-F9zPN1/project/.opencode/oh-my-opencode-air.json:
+{
+  _errors: [],
+  agents: {
+    _errors: [],
+    oracle: {
+      _errors: [],
+      temperature: [Object ...],
+    },
+  },
+}
+[oh-my-opencode-air] Invalid JSON in /tmp/loader-test-F9zPN1/project/.opencode/oh-my-opencode-air.json: JSON Parse error: Expected '}'
+(pass) loadPluginConfig > ignores invalid config (schema violation or malformed JSON) [0.53ms]
+[oh-my-opencode-air] Invalid config at /tmp/loader-test-BQSH3J/project/.opencode/oh-my-opencode-air.json:
+{
+  _errors: [],
+  agents: {
+    _errors: [],
+    oracle: {
+      _errors: [],
+      prompt: [Object ...],
+    },
+  },
+}
+(pass) loadPluginConfig > rejects prompt fields on built-in agents in config files [0.38ms]
+(pass) loadPluginConfig > respects OPENCODE_CONFIG_DIR for user config location [0.23ms]
+(pass) schema boundary validation > AgentOverrideConfigSchema accepts temperature at lower bound (0) [0.06ms]
+(pass) schema boundary validation > AgentOverrideConfigSchema accepts temperature at upper bound (2) [0.04ms]
+(pass) schema boundary validation > AgentOverrideConfigSchema rejects temperature below 0 [0.09ms]
+(pass) schema boundary validation > AgentOverrideConfigSchema rejects temperature above 2 [0.06ms]
+(pass) schema boundary validation > SessionManagerConfigSchema accepts valid boundaries [0.32ms]
+(pass) schema boundary validation > SessionManagerConfigSchema rejects maxSessionsPerAgent below 1 [0.12ms]
+(pass) schema boundary validation > SessionManagerConfigSchema rejects maxSessionsPerAgent above 10 [0.06ms]
+(pass) schema boundary validation > MultiplexerConfigSchema accepts main_pane_size at boundaries [0.20ms]
+(pass) schema boundary validation > MultiplexerConfigSchema rejects main_pane_size below 20 [0.07ms]
+(pass) schema boundary validation > MultiplexerConfigSchema rejects main_pane_size above 80 [0.06ms]
+(pass) schema boundary validation > ManualPlanSchema rejects duplicate models for same agent [0.25ms]
+(pass) schema boundary validation > ContextBudgetConfigSchema accepts valid boundaries [0.27ms]
+(pass) schema boundary validation > ContextBudgetConfigSchema rejects charsPerToken below 1 [0.10ms]
+(pass) schema boundary validation > ContextBudgetConfigSchema rejects charsPerToken above 20 [0.06ms]
+(pass) schema boundary validation > FailoverConfigSchema accepts zero timeout [0.26ms]
+(pass) schema boundary validation > FailoverConfigSchema rejects negative timeout [0.10ms]
+(pass) schema boundary validation > TodoContinuationConfigSchema rejects maxContinuations above 50 [0.29ms]
+(pass) schema boundary validation > TodoContinuationConfigSchema rejects cooldownMs above 30000 [0.11ms]
+(pass) deepMerge edge cases > both undefined returns undefined [0.02ms]
+(pass) deepMerge edge cases > base undefined returns override [0.02ms]
+(pass) deepMerge edge cases > override undefined returns base [0.02ms]
+(pass) deepMerge edge cases > arrays are replaced, not merged [0.04ms]
+(pass) deepMerge edge cases > nested objects are merged recursively [0.03ms]
+[oh-my-opencode-air] Invalid config at /tmp/onwarning-test-XdND6E/project/.opencode/oh-my-opencode-air.json:
+{
+  _errors: [],
+  agents: {
+    _errors: [],
+    oracle: {
+      _errors: [],
+      temperature: [Object ...],
+    },
+  },
+}
+(pass) onWarning callback > invalid schema calls onWarning with invalid-schema [0.31ms]
+[oh-my-opencode-air] Invalid JSON in /tmp/onwarning-test-cv8fYb/project/.opencode/oh-my-opencode-air.json: JSON Parse error: Expected '}'
+(pass) onWarning callback > invalid JSON calls onWarning with invalid-json [0.19ms]
+(pass) onWarning callback > silent option suppresses console warnings [0.17ms]
+[oh-my-opencode-air] Error reading config from /tmp/onwarning-test-532xv2/project/.opencode/oh-my-opencode-air.json: Permission denied
+(pass) onWarning callback > read error calls onWarning with read-error [0.23ms]
+[oh-my-opencode-air] Preset "nonexistent" not found (from config file). Available presets: other
+(pass) onWarning callback > missing preset calls onWarning with missing-preset [0.34ms]
+(pass) onWarning callback > silent: true on missing preset still calls onWarning but not console.warn [0.23ms]
+(pass) onWarning callback > valid config does not call onWarning [0.18ms]
+(pass) onWarning callback > no options object does not break loadPluginConfig [0.21ms]
+(pass) deepMerge behavior > merges nested agent configs from user and project [0.30ms]
+(pass) deepMerge behavior > merges nested tmux configs [0.42ms]
+(pass) deepMerge behavior > preserves user tmux.enabled when project doesn't specify [0.22ms]
+(pass) deepMerge behavior > project config overrides top-level arrays [0.32ms]
+(pass) deepMerge behavior > handles missing user config gracefully [0.18ms]
+(pass) deepMerge behavior > handles missing project config gracefully [0.20ms]
+(pass) deepMerge behavior > merges fallback timeout and chains from user and project [0.57ms]
+(pass) deepMerge behavior > preserves fallback chains with additional agent keys [0.23ms]
+(pass) preset resolution > backward compatibility: config with only agents works unchanged [0.15ms]
+(pass) preset resolution > preset applied: preset + presets returns preset's agents [0.24ms]
+(pass) preset resolution > root agents override preset agents [0.25ms]
+[oh-my-opencode-air] Preset "nonexistent" not found (from config file). Available presets: other
+(pass) preset resolution > missing preset: preset set but not in presets -> returns empty/root agents [0.25ms]
+(pass) preset resolution > preset only: no root agents, just preset works [0.23ms]
+[oh-my-opencode-air] Invalid config at /tmp/preset-test-LXkAt2/project/.opencode/oh-my-opencode-air.json:
+{
+  _errors: [],
+  presets: {
+    _errors: [],
+    invalid: {
+      _errors: [],
+      oracle: [Object ...],
+    },
+  },
+}
+(pass) preset resolution > invalid preset shape: bad agent config in preset fails schema validation [0.53ms]
+[oh-my-opencode-air] Preset "nonexistent" not found (from config file). Available presets: other
+(pass) preset resolution > nonexistent preset from config warns and falls back to root agents [0.36ms]
+[oh-my-opencode-air] Preset "nonexistent" not found (from config file). Available presets: other
+(pass) preset resolution > nonexistent preset with no root agents returns empty agents [0.34ms]
+(pass) preset resolution > options from preset are deep-merged with root agents [0.37ms]
+(pass) preset resolution > options from preset only work without root agents [0.22ms]
+(pass) preset resolution > root options override preset options for same key [0.24ms]
+(pass) environment variable preset override > Env var overrides preset from config file [0.22ms]
+(pass) environment variable preset override > Env var works when config has no preset [0.26ms]
+(pass) environment variable preset override > Env var is ignored if empty string [0.18ms]
+(pass) environment variable preset override > Env var is ignored if undefined [0.19ms]
+[oh-my-opencode-air] Preset "typo-preset" not found (from environment variable). Available presets: config-preset
+(pass) environment variable preset override > Env var with nonexistent preset warns and falls back [0.28ms]
+(pass) JSONC config support > loads .jsonc file with single-line comments [0.17ms]
+(pass) JSONC config support > loads .jsonc file with multi-line comments [0.16ms]
+(pass) JSONC config support > loads .jsonc file with trailing commas [0.17ms]
+(pass) JSONC config support > prefers .jsonc over .json when both exist [0.17ms]
+(pass) JSONC config support > falls back to .json when .jsonc does not exist [0.16ms]
+(pass) JSONC config support > loads user config from .jsonc [0.14ms]
+(pass) JSONC config support > merges user .jsonc with project .jsonc [0.28ms]
+(pass) JSONC config support > handles complex JSONC with mixed comments and trailing commas [0.23ms]
+(pass) loadAgentPrompt > returns empty object when no prompt files exist [0.27ms]
+(pass) loadAgentPrompt > loads replacement prompt from {agent}.md [0.10ms]
+(pass) loadAgentPrompt > loads append prompt from {agent}_append.md [0.10ms]
+(pass) loadAgentPrompt > loads both replacement and append prompts [0.11ms]
+[oh-my-opencode-air] Error reading prompt file /tmp/prompt-test-XRFUZx/opencode/oh-my-opencode-air/error-agent.md: Read error
+(pass) loadAgentPrompt > handles file read errors gracefully [0.23ms]
+(pass) loadAgentPrompt > prefers preset prompt files over root prompts [0.19ms]
+(pass) loadAgentPrompt > falls back to root prompt files when preset files are missing [0.13ms]
+(pass) loadAgentPrompt > falls back independently between preset and root files [0.14ms]
+(pass) loadAgentPrompt > ignores unsafe preset names for prompt lookup [0.10ms]
+[oh-my-opencode-air] Error reading prompt file /tmp/prompt-test-UmPLCf/opencode/oh-my-opencode-air/test/oracle.md: Preset read error
+(pass) loadAgentPrompt > falls back to root when preset prompt file read fails [0.25ms]
+(pass) loadAgentPrompt > works with XDG_CONFIG_HOME environment variable [0.11ms]
+(pass) loadAgentPrompt > respects OPENCODE_CONFIG_DIR for prompt location [0.14ms]
+(pass) loadAgentPrompt > falls back to default prompt dir when OPENCODE_CONFIG_DIR has no prompt [0.14ms]
+(pass) PluginConfigSchema custom agent validation > rejects custom agents in config files [0.14ms]
+
+src/mcp/index.test.ts:
+(pass) createBuiltinMcps > returns all MCPs when no disabled list provided [0.09ms]
+(pass) createBuiltinMcps > returns all MCPs with empty disabled list [0.04ms]
+(pass) createBuiltinMcps > excludes single disabled MCP [0.03ms]
+(pass) createBuiltinMcps > excludes multiple disabled MCPs [0.03ms]
+(pass) createBuiltinMcps > excludes all MCPs when all disabled [0.02ms]
+(pass) createBuiltinMcps > ignores unknown MCP names in disabled list [0.03ms]
+(pass) createBuiltinMcps > MCP configs have required properties [0.06ms]
+(pass) createBuiltinMcps > websearch MCP has correct structure [0.04ms]
+(pass) createBuiltinMcps > context7 MCP has correct structure [0.06ms]
+(pass) createBuiltinMcps > grep_app MCP has correct structure [0.05ms]
+(pass) createBuiltinMcps > ds_search MCP has correct structure [0.03ms]
+
+src/tools/preset-manager.test.ts:
+(pass) createPresetManager > handleCommandExecuteBefore > ignores non-preset commands [0.23ms]
+(pass) createPresetManager > handleCommandExecuteBefore > lists available presets when no argument given [0.29ms]
+(pass) createPresetManager > handleCommandExecuteBefore > lists presets with active marker when preset is set [0.12ms]
+(pass) createPresetManager > handleCommandExecuteBefore > shows no-presets message when none configured [0.09ms]
+(pass) createPresetManager > handleCommandExecuteBefore > switches preset and calls config.update [0.87ms]
+(pass) createPresetManager > handleCommandExecuteBefore > updates the TUI snapshot after a successful preset switch [0.22ms]
+(pass) createPresetManager > handleCommandExecuteBefore > passes temperature in config update [0.25ms]
+(pass) createPresetManager > handleCommandExecuteBefore > passes variant in config update [0.20ms]
+(pass) createPresetManager > handleCommandExecuteBefore > shows error for unknown preset name [0.09ms]
+(pass) createPresetManager > handleCommandExecuteBefore > shows error when no presets configured but argument given [0.07ms]
+(pass) createPresetManager > handleCommandExecuteBefore > handles config.update error gracefully [0.45ms]
+(pass) createPresetManager > handleCommandExecuteBefore > shows empty preset message when preset has no valid overrides [0.09ms]
+(pass) createPresetManager > handleCommandExecuteBefore > forwards options field in config update [0.18ms]
+(pass) createPresetManager > handleCommandExecuteBefore > trims whitespace from preset name argument [0.19ms]
+(pass) createPresetManager > handleCommandExecuteBefore > shows suggestion for multi-word arguments [0.26ms]
+(pass) createPresetManager > handleCommandExecuteBefore > catches tab-separated arguments [0.09ms]
+(pass) createPresetManager > handleCommandExecuteBefore > skips agents with empty overrides in mixed preset [0.24ms]
+(pass) createPresetManager > handleCommandExecuteBefore > resolves array-form model to first entry [0.21ms]
+(pass) createPresetManager > handleCommandExecuteBefore > resolves array-form model with object entries [0.17ms]
+(pass) createPresetManager > handleCommandExecuteBefore > shows variant and options in switch summary [0.23ms]
+(pass) createPresetManager > handleCommandExecuteBefore > tracks active preset after switch [0.64ms]
+(pass) createPresetManager > registerCommand > registers preset command when not present [0.06ms]
+(pass) createPresetManager > registerCommand > does not overwrite existing preset command [0.03ms]
+(pass) createPresetManager > preset switching stale state > reset updates for agents removed when switching presets [0.31ms]
+(pass) createPresetManager > preset switching stale state > no reset updates when new preset covers same agents [0.27ms]
+(pass) createPresetManager > preset switching stale state > preset state rolled back on config.update error [0.29ms]
+(pass) createPresetManager > preset switching stale state > activePreset syncs from runtime-preset state on factory creation [0.11ms]
+
+src/hooks/chat-headers.test.ts:
+(pass) createChatHeadersHook > sets x-initiator for marked Copilot messages [0.37ms]
+(pass) createChatHeadersHook > skips non-Copilot providers [0.07ms]
+(pass) createChatHeadersHook > skips requests handled by @ai-sdk/github-copilot [0.06ms]
+(pass) createChatHeadersHook > skips normal user messages [0.09ms]
+(pass) createChatHeadersHook > caches marked internal messages [0.13ms]
+(pass) createChatHeadersHook > does not cache transient message lookup failures [0.24ms]
+(pass) createChatHeadersHook > caches marked messages by session and message id [0.12ms]
+
+src/multiplexer/session-manager.test.ts:
+(pass) MultiplexerSessionManager > constructor > initializes with config [0.17ms]
+(pass) MultiplexerSessionManager > onSessionCreated > spawns pane for child sessions [0.43ms]
+(pass) MultiplexerSessionManager > onSessionCreated > ignores sessions without parentID [0.07ms]
+(pass) MultiplexerSessionManager > onSessionCreated > prefers child session directory when present [0.10ms]
+(pass) MultiplexerSessionManager > onSessionCreated > ignores if disabled in config [0.07ms]
+(pass) MultiplexerSessionManager > onSessionCreated > does not spawn twice for duplicate create events while spawning [0.32ms]
+(pass) MultiplexerSessionManager > polling and closure > closes pane when session becomes idle [0.55ms]
+(pass) MultiplexerSessionManager > polling and closure > does not close on transient status absence [0.11ms]
+(pass) MultiplexerSessionManager > polling and closure > respawns pane on later busy after idle close for resumable session [0.54ms]
+(pass) MultiplexerSessionManager > polling and closure > respawns after in-flight idle close when busy resumes same session [0.23ms]
+(pass) MultiplexerSessionManager > polling and closure > does not respawn after in-flight close if session is deleted [0.26ms]
+(pass) MultiplexerSessionManager > polling and closure > closes pane on session.deleted using info.id [0.12ms]
+(pass) MultiplexerSessionManager > polling and closure > closes pane returned by a stale spawn after session deleted [0.15ms]
+(pass) MultiplexerSessionManager > polling and closure > does nothing on busy for unknown session [0.07ms]
+(pass) MultiplexerSessionManager > polling and closure > does not respawn while initial pane spawn is still in progress [0.14ms]
+(pass) MultiplexerSessionManager > cleanup > closes all tracked panes concurrently [0.38ms]
+(pass) MultiplexerSessionManager > cleanup > clears spawning sessions during cleanup [0.20ms]
+(pass) TmuxSessionManager (backward compatibility) > TmuxSessionManager is alias for MultiplexerSessionManager [0.08ms]
+
+src/multiplexer/factory.test.ts:
+31 |       main_pane_size: 60,
+32 |     });
+33 | 
+34 |     expect(first).not.toBeNull();
+35 |     expect(second).not.toBeNull();
+36 |     expect(Object.is(first, second)).toBe(false);
+                                          ^
+error: expect(received).toBe(expected)
+
+Expected: false
+Received: true
+
+      at /home/hanbin/project/oh-my-opencode-air/src/multiplexer/factory.test.ts:36:38
+(fail) multiplexer factory > returns a fresh tmux instance per call [0.22ms]
+58 |       main_pane_size: 60,
+59 |     });
+60 | 
+61 |     expect(first).not.toBeNull();
+62 |     expect(second).not.toBeNull();
+63 |     expect(Object.is(first, second)).toBe(false);
+                                          ^
+error: expect(received).toBe(expected)
+
+Expected: false
+Received: true
+
+      at /home/hanbin/project/oh-my-opencode-air/src/multiplexer/factory.test.ts:63:38
+(fail) multiplexer factory > returns a fresh auto-detected tmux instance per call [0.16ms]
+
+src/agents/display-name.test.ts:
+(pass) displayName > stores displayName on agent when configured [2.44ms]
+(pass) displayName > injects configured displayName into orchestrator prompt mentions [0.25ms]
+(pass) displayName > normalizes @-prefixed displayName in prompt injection [0.28ms]
+(pass) displayName > normalizes whitespace-padded displayName in prompt injection [0.32ms]
+(pass) displayName > throws when duplicate displayName is assigned [0.33ms]
+(pass) displayName > throws when normalized duplicate displayName is assigned [0.25ms]
+(pass) displayName > throws when displayName conflicts with internal agent name [0.25ms]
+(pass) displayName > throws when normalized displayName conflicts with internal agent name [0.25ms]
+(pass) displayName > throws when orchestrator displayName conflicts with internal agent name [0.18ms]
+(pass) displayName > throws when displayName is not a safe agent alias [0.14ms]
+(pass) displayName > resolves legacy alias for explorer displayName override [0.16ms]
+(pass) displayName > uses displayName as host-facing registry key with hidden internal alias [0.21ms]
+(pass) displayName > uses orchestrator displayName as host-facing key with hidden internal alias [0.21ms]
+
+src/agents/index.test.ts:
+(pass) agent alias backward compatibility > applies 'explore' config to 'explorer' agent [0.19ms]
+(pass) agent alias backward compatibility > new name takes priority over old alias [0.16ms]
+(pass) agent alias backward compatibility > new agent names work directly [0.12ms]
+(pass) agent alias backward compatibility > temperature override via old alias [0.18ms]
+(pass) agent alias backward compatibility > variant override via old alias [0.14ms]
+(pass) fixer agent fallback > fixer uses default model when no fixer config provided [0.14ms]
+(pass) fixer agent fallback > fixer uses its own model when explicitly configured [0.15ms]
+(pass) orchestrator agent > orchestrator is first in agents array [0.11ms]
+(pass) orchestrator agent > orchestrator has question permission set to allow [0.17ms]
+(pass) orchestrator agent > orchestrator is denied access to council_session [0.11ms]
+(pass) orchestrator agent > orchestrator accepts overrides [0.22ms]
+(pass) orchestrator agent > orchestrator accepts variant override [0.14ms]
+(pass) orchestrator agent > orchestrator stores model array with per-model variants in _modelArray [0.19ms]
+(pass) per-model variant in array config > subagent stores model array with per-model variants [0.19ms]
+(pass) per-model variant in array config > top-level variant preserved alongside per-model variants [0.18ms]
+(pass) skill permissions > orchestrator gets codemap skill allowed by default [0.19ms]
+(pass) skill permissions > fixer does not get codemap skill allowed by default [0.15ms]
+(pass) skill permissions > oracle gets requesting-code-review skill allowed by default [0.17ms]
+(pass) skill permissions > oracle gets simplify skill allowed by default [0.14ms]
+(pass) tool permissions > oracle is denied access to council_session [0.22ms]
+(pass) tool permissions > explorer is denied access to council_session [0.14ms]
+(pass) isSubagent type guard > returns true for all four subagent names [0.02ms]
+(pass) isSubagent type guard > returns false for orchestrator [0.01ms]
+(pass) isSubagent type guard > returns false for invalid agent names [0.02ms]
+(pass) agent classification > SUBAGENT_NAMES excludes orchestrator [0.01ms]
+(pass) agent classification > getAgentConfigs applies correct classification visibility and mode [0.21ms]
+(pass) createAgents > creates all agents without config [0.15ms]
+(pass) createAgents > creates exactly 5 agents by default [0.12ms]
+(pass) getAgentConfigs > returns config record keyed by agent name [0.16ms]
+(pass) getAgentConfigs > includes description in SDK config [0.15ms]
+(pass) options passthrough > options are applied to agent config via overrides [0.17ms]
+(pass) options passthrough > options with nested objects are passed through [0.14ms]
+(pass) options passthrough > options work with other overrides [0.15ms]
+(pass) options passthrough > options are absent when not configured [0.15ms]
+(pass) options passthrough > options flow through getAgentConfigs to SDK output [0.17ms]
+(pass) options passthrough > options are shallow-merged with existing agent config options [0.13ms]
+(pass) AgentOverrideConfigSchema options validation > accepts valid options object [0.11ms]
+(pass) AgentOverrideConfigSchema options validation > accepts empty options object [0.04ms]
+(pass) AgentOverrideConfigSchema options validation > accepts nested values in options [0.04ms]
+(pass) AgentOverrideConfigSchema options validation > accepts options alongside other fields [0.11ms]
+(pass) AgentOverrideConfigSchema options validation > config without options is valid [0.04ms]
+(pass) AgentOverrideConfigSchema options validation > rejects non-object options [0.13ms]
+(pass) AgentOverrideConfigSchema options validation > rejects empty model arrays [0.23ms]
+(pass) AgentOverrideConfigSchema options validation > accepts prompt and orchestratorPrompt override fields [0.07ms]
+(pass) AgentOverrideConfigSchema options validation > rejects empty prompt fields [0.10ms]
+(pass) AgentOverrideConfigSchema options validation > rejects empty orchestratorPrompt fields [0.10ms]
+(pass) AgentOverrideConfigSchema options validation > rejects description field on overrides [0.13ms]
+(pass) PluginConfigSchema custom-agent-only prompt fields > rejects prompt on built-in top-level agent overrides [0.11ms]
+(pass) PluginConfigSchema custom-agent-only prompt fields > rejects orchestratorPrompt on built-in top-level agent overrides [0.09ms]
+(pass) PluginConfigSchema custom-agent-only prompt fields > rejects custom-only prompt fields on built-in preset agents [0.16ms]
+(pass) PluginConfigSchema custom-agent-only prompt fields > rejects prompt fields on custom agents [0.10ms]
+(pass) PluginConfigSchema custom-agent-only prompt fields > accepts sessionManager config [0.16ms]
+(pass) disabled_agents > disabled agents are not created [0.12ms]
+(pass) disabled_agents > protected agents cannot be disabled [0.13ms]
+(pass) disabled_agents > agent count decreases when agents are disabled [0.16ms]
+(pass) disabled_agents > getDisabledAgents respects protection rules [0.03ms]
+(pass) disabled_agents > getEnabledAgentNames filters correctly [0.05ms]
+(pass) disabled_agents > getEnabledAgentNames does not include custom agents [0.04ms]
+(pass) agent factory boundary enforcement > creates exactly the 5 allowed built-in agents by default [0.11ms]
+(pass) agent factory boundary enforcement > each built-in agent has a defined config [0.10ms]
+(pass) agent factory boundary enforcement > orchestrator is always first in the returned array [0.10ms]
+(pass) agent factory boundary enforcement > subagents appear after orchestrator [0.15ms]
+(pass) agent factory boundary enforcement > all subagents have a defined default model [0.12ms]
+(pass) agent factory boundary enforcement > orchestrator model is undefined by default (resolved at runtime) [0.11ms]
+(pass) agent factory boundary enforcement > all agents have a prompt defined [0.11ms]
+(pass) custom agent boundary rules > custom agents are not allowed and throw an error [0.08ms]
+(pass) custom agent boundary rules > multiple custom agents throw an error with all names [0.08ms]
+(pass) custom agent boundary rules > custom agent clashing with built-in name is not treated as custom [0.14ms]
+(pass) custom agent boundary rules > custom agent clashing with alias name is not treated as custom [0.12ms]
+(pass) getDisabledAgents edge cases > empty disabled_agents array means no agents disabled [0.03ms]
+(pass) getDisabledAgents edge cases > undefined disabled_agents uses DEFAULT_DISABLED_AGENTS [0.02ms]
+(pass) getDisabledAgents edge cases > cannot disable orchestrator even when explicitly listed [0.02ms]
+(pass) getDisabledAgents edge cases > can disable all non-protected subagents [0.07ms]
+
+src/cli/model-key-normalization.test.ts:
+(pass) model key normalization > normalizes multi-segment chutes model ids [1.32ms]
+(pass) model key normalization > treats spaces and hyphens as equivalent aliases [0.04ms]
+
+src/cli/skills.test.ts:
+(pass) skills permissions > should allow all skills for orchestrator by default [0.02ms]
+(pass) skills permissions > should deny all skills for other agents by default [0.02ms]
+(pass) skills permissions > should allow recommended skills for specific agents [0.01ms]
+(pass) skills permissions > should honor explicit skill list overrides [0.08ms]
+(pass) skills permissions > should honor wildcard in explicit list [0.02ms]
+
+src/cli/system.test.ts:
+(pass) system > isOpenCodeInstalled detects opencode in ~/.opencode/bin [1587.68ms]
+(pass) system > isOpenCodeInstalled returns boolean [1530.02ms]
+(pass) system > isTmuxInstalled returns boolean [4.54ms]
+(pass) system > fetchLatestVersion returns version string or null [0.23ms]
+(pass) system > fetchLatestVersion returns null on error [0.10ms]
+(pass) system > getOpenCodeVersion returns string or null [1521.52ms]
+
+src/cli/providers.test.ts:
+(pass) providers > MODEL_MAPPINGS includes supported providers [0.05ms]
+(pass) providers > generateLiteConfig defaults to openai and includes generated presets [0.35ms]
+(pass) providers > generateLiteConfig uses correct OpenAI models [0.07ms]
+(pass) providers > generateLiteConfig can set opencode-go as active preset [0.10ms]
+(pass) providers > generateLiteConfig rejects unsupported preset [0.06ms]
+(pass) providers > generateLiteConfig rejects non-generated model mappings as active presets [0.04ms]
+(pass) providers > generateLiteConfig rejects inherited property names as presets [0.03ms]
+(pass) providers > generateLiteConfig enables tmux when requested [0.06ms]
+(pass) providers > generateLiteConfig includes default skills [0.10ms]
+(pass) providers > generateLiteConfig includes mcps field [0.08ms]
+(pass) providers > generateLiteConfig openai includes correct mcps [0.04ms]
+
+src/cli/paths.test.ts:
+(pass) paths > getExistingConfigPath() > returns .json if it exists [0.23ms]
+(pass) paths > getExistingConfigPath() > returns .jsonc if .json doesn't exist but .jsonc does [0.13ms]
+(pass) paths > getExistingConfigPath() > returns default .json if neither exists [0.06ms]
+(pass) paths > getConfigDir() uses OPENCODE_CONFIG_DIR when set [0.03ms]
+(pass) paths > getConfigDir() uses XDG_CONFIG_HOME when set [0.03ms]
+(pass) paths > getConfigDir() falls back to ~/.config when XDG_CONFIG_HOME is unset [0.03ms]
+(pass) paths > getConfigSearchDirs() returns custom dir first, then default dir [0.04ms]
+(pass) paths > getConfigSearchDirs() de-duplicates identical dirs [0.02ms]
+(pass) paths > getOpenCodeConfigPaths() returns both json and jsonc paths [0.02ms]
+(pass) paths > getOpenCodeConfigPaths() ignores OPENCODE_CONFIG_DIR [0.03ms]
+(pass) paths > getConfigJson() returns correct path [0.02ms]
+(pass) paths > getConfigJsonc() returns correct path [0.01ms]
+(pass) paths > getLiteConfig() returns correct path [0.04ms]
+(pass) paths > getLiteConfig() respects OPENCODE_CONFIG_DIR [0.03ms]
+(pass) paths > ensureConfigDir() creates directory if it doesn't exist [0.09ms]
+
+src/cli/doctor.test.ts:
+(pass) parseDoctorArgs > no args returns empty [1.11ms]
+(pass) parseDoctorArgs > --json sets json flag [0.05ms]
+(pass) parseDoctorArgs > --help sets help flag [0.03ms]
+(pass) parseDoctorArgs > unknown option returns error [0.02ms]
+(pass) parseDoctorArgs > multiple unknown options keeps first error [0.02ms]
+(pass) parseDoctorArgs > positional arg returns error [0.01ms]
+(pass) runDoctorCheck > no config files returns ok [0.26ms]
+(pass) runDoctorCheck > valid project config returns ok [0.30ms]
+(pass) runDoctorCheck > invalid JSON returns not ok with invalid-json error [0.16ms]
+(pass) runDoctorCheck > config deleted after discovery returns read error with path [0.23ms]
+(pass) runDoctorCheck > invalid schema returns not ok with schema issues [0.44ms]
+(pass) runDoctorCheck > multiple schema errors includes relevant paths [0.35ms]
+(pass) runDoctorCheck > empty config file returns invalid-json error [0.13ms]
+(pass) runDoctorCheck > invalid user config skips preset check [0.24ms]
+(pass) runDoctorCheck > preset check passes with valid preset [0.17ms]
+(pass) runDoctorCheck > preset check fails for missing preset [0.18ms]
+(pass) runDoctorCheck > env preset overrides config preset [0.22ms]
+(pass) runDoctorCheck > project config overrides user config with merge [0.36ms]
+(pass) runDoctorCheck > json formatter omits parsed config payload [0.27ms]
+(pass) runDoctorCheck > project preset overrides user preset [0.36ms]
+(pass) runDoctorCheck > .jsonc preferred over .json [0.17ms]
+Usage: oh-my-opencode-air doctor [OPTIONS]
+
+Options:
+  --json              Print diagnostics as JSON
+  -h, --help          Show this help message
+(pass) doctor CLI wrapper > help exits 0 [0.25ms]
+Unknown doctor option: --bad
+(pass) doctor CLI wrapper > unknown arg exits 1 [0.10ms]
+Project: /tmp/doctor-cli-test-42nLOg/project
+
+[user] No config file found
+[project] No config file found
+(pass) doctor CLI wrapper > no config exits 0 [0.26ms]
+Project: /tmp/doctor-cli-test-4VHDhN/project
+
+[user] No config file found
+[project] /tmp/doctor-cli-test-4VHDhN/project/.opencode/oh-my-opencode-air.json ✗
+  Invalid JSON: JSON Parse error: Expected '}'
+(pass) doctor CLI wrapper > invalid config exits 1 [0.22ms]
+(pass) doctor CLI wrapper > --json mode outputs valid JSON [0.27ms]
+(pass) doctor CLI wrapper > JSON output has correct shape with schema error [0.39ms]
+
+src/cli/config-manager.test.ts:
+(pass) config-manager (barrel) > stripJsonComments > returns unchanged JSON without comments [1.24ms]
+(pass) config-manager (barrel) > stripJsonComments > strips single-line comments [0.05ms]
+(pass) config-manager (barrel) > stripJsonComments > strips multi-line comments [0.03ms]
+(pass) config-manager (barrel) > stripJsonComments > strips trailing commas [0.02ms]
+(pass) config-manager (barrel) > stripJsonComments > strips trailing commas in arrays [0.04ms]
+(pass) config-manager (barrel) > stripJsonComments > preserves URLs with double slashes [0.02ms]
+(pass) config-manager (barrel) > stripJsonComments > preserves strings containing comment-like patterns [0.02ms]
+(pass) config-manager (barrel) > stripJsonComments > handles complex JSONC with mixed comments and trailing commas [0.04ms]
+(pass) config-manager (barrel) > stripJsonComments > handles escaped quotes in strings [0.03ms]
+(pass) config-manager (barrel) > stripJsonComments > handles empty input [0.01ms]
+(pass) config-manager (barrel) > stripJsonComments > handles whitespace-only input [0.01ms]
+(pass) config-manager (barrel) > stripJsonComments > handles single-line comment at start of file [0.02ms]
+(pass) config-manager (barrel) > stripJsonComments > handles comment-only lines between properties [0.02ms]
+(pass) config-manager (barrel) > stripJsonComments > handles multiple trailing commas in nested structures [0.02ms]
+(pass) config-manager (barrel) > stripJsonComments > handles unclosed string gracefully without throwing [0.02ms]
+(pass) config-manager (barrel) > stripJsonComments > preserves comma-bracket patterns inside strings [0.03ms]
+(pass) config-manager (barrel) > stripJsonComments > preserves comma-brace patterns inside strings [0.03ms]
+(pass) config-manager (barrel) > stripJsonComments > handles Windows CRLF line endings [0.03ms]
+
+src/cli/config-io.test.ts:
+(pass) config-io > stripJsonComments strips comments and trailing commas [0.05ms]
+(pass) config-io > parseConfigFile parses valid JSON [0.12ms]
+(pass) config-io > parseConfigFile returns null for non-existent file [0.04ms]
+(pass) config-io > parseConfigFile returns null for empty or whitespace-only file [0.08ms]
+(pass) config-io > parseConfigFile returns error for invalid JSON [0.09ms]
+(pass) config-io > parseConfig tries .jsonc if .json is missing [0.12ms]
+(pass) config-io > writeConfig writes JSON and creates backup [0.19ms]
+(pass) config-io > addPluginToOpenCodeConfig adds plugin and removes duplicates [0.60ms]
+(pass) config-io > addPluginToOpenCodeConfig stores package name for bunx temp paths [0.56ms]
+(pass) config-io > addPluginToOpenCodeConfig stores local repo path for local dev paths [0.32ms]
+(pass) config-io > addPluginToOpenCodeConfig stores local repo path for local paths containing bunx- [0.36ms]
+(pass) config-io > addPluginToOpenCodeConfig deduplicates existing local repo path entries [0.31ms]
+(pass) config-io > addPluginToOpenCodeConfig preserves non-string plugin entries when refreshing [0.27ms]
+(pass) config-io > addPluginToOpenCodeConfig removes tuple plugin entries [0.24ms]
+(pass) config-io > addPluginToOpenCodeTuiConfig adds plugin to tui.json and removes duplicates [0.41ms]
+(pass) config-io > addPluginToOpenCodeTuiConfig stores package name for bunx temp paths [0.31ms]
+(pass) config-io > addPluginToOpenCodeTuiConfig removes tuple plugin entries [0.22ms]
+(pass) config-io > addPluginToOpenCodeTuiConfig honors OPENCODE_TUI_CONFIG [0.15ms]
+(pass) config-io > addPluginToOpenCodeTuiConfig does not bypass OPENCODE_TUI_CONFIG for existing default config [0.21ms]
+(pass) config-io > addPluginToOpenCodeTuiConfig stores local repo path for local dev paths [0.26ms]
+(pass) config-io > addPluginToOpenCodeTuiConfig deduplicates existing local repo path entries [0.33ms]
+(pass) config-io > addPluginToOpenCodeTuiConfig preserves non-string plugin entries when refreshing [0.26ms]
+(pass) config-io > writeLiteConfig writes lite config with OpenAI preset [0.21ms]
+(pass) config-io > writeLiteConfig writes selected preset [0.18ms]
+(pass) config-io > disableDefaultAgents disables explore and general agents [0.22ms]
+(pass) config-io > enableLspByDefault sets lsp true when missing [0.22ms]
+(pass) config-io > enableLspByDefault preserves explicit lsp config [0.10ms]
+(pass) config-io > enableLspByDefault does not write when lsp exists [0.11ms]
+(pass) config-io > detectCurrentConfig detects installed status [0.40ms]
+(pass) config-io > detectCurrentConfig treats local repo path entries as installed [0.15ms]
+
+src/utils/subagent-depth.test.ts:
+(pass) SubagentDepthTracker > constructor > uses DEFAULT_MAX_SUBAGENT_DEPTH (3) by default [1.12ms]
+(pass) SubagentDepthTracker > constructor > accepts custom max depth [0.02ms]
+(pass) SubagentDepthTracker > getDepth > returns 0 for untracked sessions (root sessions) [0.04ms]
+(pass) SubagentDepthTracker > getDepth > returns tracked depth for registered sessions [0.07ms]
+(pass) SubagentDepthTracker > registerChild > tracks depth correctly (parent=0, child=1, grandchild=2) [0.04ms]
+(pass) SubagentDepthTracker > registerChild > returns false when max depth exceeded (depth 4 > max 3) [0.03ms]
+(pass) SubagentDepthTracker > registerChild > tracks across multiple branches independently [0.03ms]
+(pass) SubagentDepthTracker > registerChild > does not re-register existing session [0.02ms]
+(pass) SubagentDepthTracker > registerChild > updates depth if child is re-registered from different parent [0.02ms]
+(pass) SubagentDepthTracker > cleanup > removes a specific session [0.06ms]
+(pass) SubagentDepthTracker > cleanup > does not throw when cleaning up untracked session [0.04ms]
+(pass) SubagentDepthTracker > cleanupAll > removes all sessions [0.05ms]
+(pass) SubagentDepthTracker > cleanupAll > does not throw when called on empty tracker [0.04ms]
+
+src/utils/task.test.ts:
+(pass) parseTaskIdFromTaskOutput > parses task_id line from successful task tool output [0.10ms]
+(pass) parseTaskIdFromTaskOutput > returns undefined when task_id is absent [0.04ms]
+
+src/utils/polling.test.ts:
+(pass) pollUntilStable > returns success when condition becomes stable [52.08ms]
+(pass) pollUntilStable > returns timeout when max poll time exceeded [51.27ms]
+(pass) pollUntilStable > returns aborted when signal is aborted [10.38ms]
+(pass) pollUntilStable > respects custom stability threshold [51.48ms]
+(pass) pollUntilStable > resets stable count when condition becomes unstable [61.80ms]
+(pass) pollUntilStable > uses default options when not provided [2505.60ms]
+(pass) pollUntilStable > handles fetchFn that throws errors [10.41ms]
+(pass) pollUntilStable > passes stable count to isStable function [40.73ms]
+(pass) delay > delays for specified milliseconds [50.31ms]
+(pass) delay > resolves without value [10.20ms]
+(pass) delay > can be used in promise chains [10.27ms]
+
+src/utils/system-collapse.test.ts:
+(pass) collapseSystemInPlace > mutates multi-element array in-place [0.52ms]
+(pass) collapseSystemInPlace > mutates three-element array in-place [0.04ms]
+(pass) collapseSystemInPlace > handles single-element array [0.02ms]
+(pass) collapseSystemInPlace > handles empty array [0.02ms]
+(pass) collapseSystemInPlace > preserves previous empty-string cleanup behavior [0.05ms]
+(pass) collapseSystemInPlace > reassignment would NOT be visible (regression guard) [0.04ms]
+
+src/utils/context-budget.test.ts:
+(pass) estimateTokens > empty string is 0 tokens [0.99ms]
+(pass) estimateTokens > short text english [0.03ms]
+(pass) estimateTokens > short text code [0.02ms]
+(pass) estimateTokens > exact multiple english [0.02ms]
+(pass) estimateTokens > exact multiple code [0.01ms]
+(pass) estimateMessageTokens > empty message has overhead only [0.05ms]
+(pass) estimateMessageTokens > message with text part [0.07ms]
+(pass) estimateMessageTokens > message with code part [0.02ms]
+(pass) estimateMessageTokens > tool-result is treated as code [0.02ms]
+(pass) estimateSystemTokens > empty array is 0 [0.02ms]
+(pass) estimateSystemTokens > single string [0.01ms]
+(pass) estimateSystemTokens > multiple strings are joined [0.02ms]
+(pass) resolveModelLimit > known model by id [0.05ms]
+(pass) resolveModelLimit > known model with provider prefix [0.02ms]
+(pass) resolveModelLimit > unknown model falls back to default [0.01ms]
+(pass) resolveModelLimit > override wins [0.02ms]
+(pass) trimMessagesToBudget > no trimming when under budget [0.15ms]
+(pass) trimMessagesToBudget > warns at 70% [0.23ms]
+(pass) trimMessagesToBudget > trims at 90% [0.10ms]
+(pass) trimMessagesToBudget > never removes the last message [0.31ms]
+(pass) ContextBudgetManager > disabled manager does nothing [0.14ms]
+(pass) ContextBudgetManager > trims when over budget [0.13ms]
+
+src/utils/agent-variant.test.ts:
+(pass) normalizeAgentName > returns name unchanged if no @ prefix [0.04ms]
+(pass) normalizeAgentName > strips @ prefix from agent name [0.03ms]
+(pass) normalizeAgentName > trims whitespace [0.01ms]
+(pass) normalizeAgentName > handles @ prefix with whitespace [0.01ms]
+(pass) normalizeAgentName > handles empty string
+(pass) resolveAgentVariant > returns undefined when config is undefined [0.08ms]
+(pass) resolveAgentVariant > returns undefined when agents is undefined [0.03ms]
+(pass) resolveAgentVariant > returns undefined when agent has no variant [0.02ms]
+(pass) resolveAgentVariant > returns variant when configured [0.03ms]
+(pass) resolveAgentVariant > normalizes agent name with @ prefix [0.02ms]
+(pass) resolveAgentVariant > returns undefined for empty string variant [0.01ms]
+(pass) resolveAgentVariant > returns undefined for whitespace-only variant [0.01ms]
+(pass) resolveAgentVariant > trims variant whitespace [0.01ms]
+(pass) resolveAgentVariant > returns undefined for non-string variant [0.02ms]
+(pass) resolveAgentVariant > resolves displayName alias to internal agent for variant lookup [0.06ms]
+(pass) resolveRuntimeAgentName > keeps internal agent names unchanged [0.02ms]
+(pass) resolveRuntimeAgentName > resolves displayName to internal name [0.03ms]
+(pass) resolveRuntimeAgentName > resolves displayName with @ prefix and whitespace [0.03ms]
+(pass) resolveRuntimeAgentName > resolves displayName configured via legacy alias key [0.02ms]
+(pass) resolveRuntimeAgentName > returns normalized name when no displayName match exists [0.02ms]
+(pass) rewriteDisplayNameMentions > rewrites displayName mentions to internal names for direct invocation [0.18ms]
+(pass) rewriteDisplayNameMentions > keeps internal mentions working while rewriting aliases [0.05ms]
+(pass) rewriteDisplayNameMentions > does not rewrite embedded text such as email addresses [0.03ms]
+(pass) rewriteDisplayNameMentions > resolves custom agents by displayName for variant/runtime lookups [0.07ms]
+(pass) applyAgentVariant > returns body unchanged when variant is undefined [0.04ms]
+(pass) applyAgentVariant > returns body unchanged when body already has variant [0.03ms]
+(pass) applyAgentVariant > applies variant to body without variant [0.02ms]
+(pass) applyAgentVariant > preserves all existing body properties [0.04ms]
+
+src/utils/logger.test.ts:
+(pass) logger > log() silently no-ops before initLogger() [0.05ms]
+(pass) logger > initLogger creates per-session log file [0.38ms]
+(pass) logger > writes log message with timestamp [0.31ms]
+(pass) logger > logs message with data object [0.25ms]
+(pass) logger > logs message without extra JSON when no data [0.26ms]
+(pass) logger > appends multiple log entries [0.48ms]
+(pass) logger > initLogger called twice uses second session file [0.47ms]
+(pass) logger > cleanup deletes files older than 7 days [0.30ms]
+(pass) logger > cleanup preserves recent files [0.11ms]
+(pass) logger > cleanup with mixed-age files deletes only old ones [0.25ms]
+(pass) logger > cleanup with no existing files does not crash [0.17ms]
+(pass) logger > handles circular references in data [6.02ms]
+(pass) logger > getLogDir returns OPENCODE_LOG_DIR when set [0.03ms]
+(pass) logger > getLogDir falls back to os.homedir when env not set [0.04ms]
+(pass) logger > handles complex data structures [0.28ms]
+
+src/utils/session-manager.test.ts:
+(pass) SessionManager > keeps most recently used sessions within limit [0.48ms]
+(pass) SessionManager > clears parent-scoped sessions [0.05ms]
+(pass) SessionManager > includes read context for remembered sessions [0.23ms]
+(pass) SessionManager > filters tiny reads and caps read context files [0.10ms]
+(pass) SessionManager > uses configurable read context thresholds [0.08ms]
+(pass) SessionManager > bounds stored read context files to the render cap plus overflow marker [0.12ms]
+(pass) deriveTaskSessionLabel > prefers description over prompt [0.14ms]
+(pass) deriveTaskSessionLabel > falls back to prompt then generic label [0.09ms]
+
+src/utils/session.test.ts:
+(pass) session utilities > withTimeout resolves without waiting for the timeout [0.23ms]
+(pass) session utilities > withTimeout rejects with OperationTimeoutError when operation hangs [5.26ms]
+(pass) session utilities > promptWithTimeout aborts a timed-out prompt before rejecting [6.81ms]
+(pass) session utilities > promptWithTimeout preserves timeout error when abort fails [5.27ms]
+(pass) session utilities > abortSessionWithTimeout rejects if abort hangs [5.19ms]
+
+src/tools/smartfetch/cache.test.ts:
+(pass) smartfetch/cache > includes save_binary but not format in the cache key [1.91ms]
+
+src/tools/smartfetch/utils.test.ts:
+(pass) smartfetch/utils > extracts cleaned headings from markdown [0.17ms]
+(pass) smartfetch/utils > injects metadata comments after an XML declaration in html output [0.15ms]
+
+src/tools/smartfetch/secondary-model.test.ts:
+(pass) smartfetch/secondary-model > falls back when the first model returns empty text [1.94ms]
+(pass) smartfetch/secondary-model > falls back when the first model throws [0.19ms]
+
+src/tools/smartfetch/tool.test.ts:
+(pass) smartfetch/tool > returns a required llms.txt message when prefer_llms_txt is always and no llms.txt is available [5.69ms]
+
+src/tools/smartfetch/network.test.ts:
+(pass) smartfetch/network > collects unique allowed origins from permission patterns [1.39ms]
+(pass) smartfetch/network > follows permitted same-origin redirects [0.54ms]
+(pass) smartfetch/network > blocks cross-origin redirects when the origin is not allowed [0.16ms]
+(pass) smartfetch/network > allows redirects to explicitly allowed origins [0.22ms]
+(pass) smartfetch/network > builds conditional headers from etag and last-modified without binary branching [0.07ms]
+
+src/hooks/apply-patch/operations.test.ts:
+(pass) apply-patch/operations > preparePatchChanges and applyPreparedChanges apply an exact match [6.03ms]
+(pass) apply-patch/operations > rewritePatchText leaves a healthy patch intact [1.91ms]
+(pass) apply-patch/operations > rewritePatchText unwraps an exact patch wrapped in a heredoc [1.16ms]
+(pass) apply-patch/operations > rewritePatchText normalizes exact CRLF + heredoc input and the patch still works [1.92ms]
+(pass) apply-patch/operations > rewritePatchText rewrites a stale patch and preserves new_lines byte-for-byte [1.39ms]
+(pass) apply-patch/operations > rewritePatchText removes EOF when a rescue moves the chunk away from the real end [0.96ms]
+(pass) apply-patch/operations > rewritePatchText keeps EOF when the resolved chunk still ends at the real end [0.90ms]
+(pass) apply-patch/operations > rewritePatchText canonicalizes a unicode-only stale patch [0.97ms]
+(pass) apply-patch/operations > rewritePatchText canonicalizes a trim-end stale patch [2.64ms]
+(pass) apply-patch/operations > rewritePatchText no longer rescues a trim-only stale patch [1.34ms]
+(pass) apply-patch/operations > rewritePatchText no longer canonicalizes a dangerous indented case [0.83ms]
+(pass) apply-patch/operations > rewritePatchText rejects malformed @@ instead of silently sanitizing it [0.47ms]
+(pass) apply-patch/operations > preparePatchChanges rejects a malformed Add File [0.46ms]
+(pass) apply-patch/operations > preparePatchChanges normalizes an Update File with an absolute path inside root [1.40ms]
+(pass) apply-patch/operations > preparePatchChanges normalizes an Add File with an absolute path inside root [1.24ms]
+(pass) apply-patch/operations > preparePatchChanges normalizes a Move to with an absolute path inside root [2.02ms]
+(pass) apply-patch/operations > preparePatchChanges blocks an absolute path outside root/worktree [0.54ms]
+(pass) apply-patch/operations > preparePatchChanges allows an absolute path inside worktree even when it is outside root [1.18ms]
+(pass) apply-patch/operations > preparePatchChanges does not redirect an absolute root target to its basename [0.48ms]
+(pass) apply-patch/operations > preparePatchChanges rejects Add File on an existing path [0.61ms]
+(pass) apply-patch/operations > preparePatchChanges rejects Move to on a different existing destination [1.13ms]
+(pass) apply-patch/operations > rewritePatchText rejects a missing Delete File like preparePatchChanges [0.96ms]
+(pass) apply-patch/operations > rewritePatchText rejects duplicate Delete File on the same path [0.79ms]
+(pass) apply-patch/operations > rewritePatchText rejects Delete File on the source after a previous move [2.65ms]
+(pass) apply-patch/operations > rewritePatchText keeps a valid Delete File and apply still works [1.87ms]
+(pass) apply-patch/operations > applyPreparedChanges rejects direct add on an existing path [0.75ms]
+(pass) apply-patch/operations > applyPreparedChanges rejects direct move on an existing destination [1.28ms]
+(pass) apply-patch/operations > applyPreparedChanges rejects legacy arrays with relative paths [0.18ms]
+(pass) apply-patch/operations > rewritePatchText and preparePatchChanges share the validation/verification taxonomy [0.91ms]
+(pass) apply-patch/operations > rewritePatchText canonicalizes EOF insertion with a tolerant anchor [0.95ms]
+(pass) apply-patch/operations > rewritePatch groups two exact Update File hunks on the same path [1.16ms]
+(pass) apply-patch/operations > rewritePatch groups a second update that depends on the first [2.35ms]
+(pass) apply-patch/operations > rewritePatch collapses Add File + exact Update File into a self-contained add [0.58ms]
+(pass) apply-patch/operations > rewritePatch collapses Add File + Update File + Move to into a self-contained final add [0.89ms]
+(pass) apply-patch/operations > rewritePatch collapses an exact move followed by an update on the destination [1.29ms]
+(pass) apply-patch/operations > rewritePatch minimizes whole-file collapse when the fallback remains verifiable [5.70ms]
+(pass) apply-patch/operations > rewritePatch keeps the correct change order when grouping same-file updates [2.19ms]
+(pass) apply-patch/operations > preparePatchChanges fails when rescue is ambiguous [0.79ms]
+(pass) apply-patch/operations > applyPreparedChanges reverts previous changes when a later apply fails [3.17ms]
+(pass) apply-patch/operations > applyPreparedChanges supports update with move_path and preserves the source mode [2.36ms]
+(pass) apply-patch/operations > applyPreparedChanges rejects direct update on a missing source [0.34ms]
+(pass) apply-patch/operations > applyPreparedChanges rejects direct delete on a missing source [0.33ms]
+(pass) apply-patch/operations > applyPreparedChanges rejects direct move with a missing source [0.44ms]
+(pass) apply-patch/operations > applyPreparedChanges rejects an invalid transition after a previous delete [0.79ms]
+(pass) apply-patch/operations > applyPatch supports move + update when the block is stale [4.23ms]
+(pass) apply-patch/operations > preparePatchChanges and applyPreparedChanges preserve CRLF with stale rescue + exact chunk [1.64ms]
+(pass) apply-patch/operations > preparePatchChanges and applyPreparedChanges support pure insertion at EOF [1.50ms]
+(pass) apply-patch/operations > preparePatchChanges and applyPreparedChanges accumulate two Update File hunks on the same path [1.96ms]
+(pass) apply-patch/operations > preparePatchChanges and applyPreparedChanges preserve a file without a final newline [1.45ms]
+(pass) apply-patch/operations > applyPatch applies add + update in the same patch [2.44ms]
+(pass) apply-patch/operations > applyPatch applies update + delete in the same patch [2.34ms]
+(pass) apply-patch/operations > applyPatch applies move + add in the same patch [3.57ms]
+(pass) apply-patch/operations > rewritePatchText blocks a patch when the path escapes through a symlink with a missing ancestor [1.02ms]
+(pass) apply-patch/operations > rewritePatchText blocks the whole patch if any add/delete escapes root even when an update is rewritable [0.91ms]
+(pass) apply-patch/operations > preparePatchChanges keeps an escaping relative path as blocked [0.44ms]
+(pass) apply-patch/operations > preparePatchChanges rejects a path that escapes through a symlink with a missing ancestor [0.85ms]
+
+src/hooks/apply-patch/codec.test.ts:
+(pass) apply-patch/codec > stripHeredoc extracts the real patch content [0.02ms]
+(pass) apply-patch/codec > parsePatch recognizes add delete update and move [0.08ms]
+(pass) apply-patch/codec > parsePatch tolerates heredocs with aggressive CRLF and preserves EOF [0.05ms]
+(pass) apply-patch/codec > parsePatchStrict preserves End Patch text when it is hunk context [0.05ms]
+(pass) apply-patch/codec > parsePatchStrict fails on garbage inside @@ [0.05ms]
+(pass) apply-patch/codec > parsePatchStrict fails on garbage inside Add File [0.03ms]
+(pass) apply-patch/codec > parsePatchStrict fails on malformed Delete File [0.04ms]
+(pass) apply-patch/codec > parsePatchStrict fails on garbage after End Patch [0.08ms]
+(pass) apply-patch/codec > parsePatchStrict fails when Update File has no @@ chunks [0.04ms]
+(pass) apply-patch/codec > formatPatch allows stable parse -> format -> parse roundtrips [0.09ms]
+(pass) apply-patch/codec > normalizeUnicode unifies expected typographic variants [0.02ms]
+(pass) apply-patch/codec > normalizeUnicode covers less common typographic variants [0.01ms]
+
+src/hooks/apply-patch/matching.test.ts:
+(pass) apply-patch/matching > seek finds matches with unicode and trim-end [0.09ms]
+(pass) apply-patch/matching > seek does not rescue trim-only matches with different indentation [0.04ms]
+(pass) apply-patch/matching > prefix and suffix detect common edges [0.05ms]
+(pass) apply-patch/matching > rescueByPrefixSuffix rescues a single stale block [0.06ms]
+(pass) apply-patch/matching > rescueByPrefixSuffix marks ambiguity when multiple locations exist [0.04ms]
+(pass) apply-patch/matching > rescueByPrefixSuffix preserves one-line unicode plus trim-end pairing [0.04ms]
+(pass) apply-patch/matching > rescueByPrefixSuffix keeps tolerant one-line ambiguity detection [0.03ms]
+(pass) apply-patch/matching > rescueByPrefixSuffix ignores one-line right hits before the left edge [0.03ms]
+(pass) apply-patch/matching > rescueByLcs respects the start and finds a single candidate [0.16ms]
+(pass) apply-patch/matching > rescueByLcs marks ambiguity when two windows tie without common edges [0.05ms]
+(pass) apply-patch/matching > rescueByLcs rejects windows with only one matching edge even when the score is high [0.04ms]
+(pass) apply-patch/matching > rescueByLcs prunes a disproportionate chunk even when it has compatible edges [0.17ms]
+(pass) apply-patch/matching > rescueByLcs discards an implausible window before expensive scoring [0.10ms]
+(pass) apply-patch/matching > seek matches mixed curly and straight quotes [0.04ms]
+(pass) apply-patch/matching > seekMatch reports when the match was only tolerant and safe [0.06ms]
+(pass) apply-patch/matching > comparator separation distinguishes safe rescue from permissive comparators [0.02ms]
+
+src/hooks/apply-patch/hook.test.ts:
+(pass) apply-patch/hook > ignores tools other than apply_patch [1.79ms]
+(pass) apply-patch/hook > blocks an unrecoverable patch as verification before native execution [1.01ms]
+(pass) apply-patch/hook > normalizes an exact patch wrapped in a heredoc before native execution [1.95ms]
+(pass) apply-patch/hook > normalizes absolute paths inside root before native execution [0.75ms]
+(pass) apply-patch/hook > passes through an absolute target outside root/worktree before native execution [0.73ms]
+(pass) apply-patch/hook > passes through mixed stale inside and absolute outside patch without partial rewrite [1.18ms]
+(pass) apply-patch/hook > rewrites a stale prefix patch and remains applicable [1.95ms]
+(pass) apply-patch/hook > does not alter new_lines during rewrite [0.96ms]
+(pass) apply-patch/hook > rewrites a unicode-only stale patch and remains applicable [2.08ms]
+(pass) apply-patch/hook > rewrites a trim-end stale patch and remains applicable [1.86ms]
+(pass) apply-patch/hook > blocks a trim-only stale patch as verification [0.78ms]
+(pass) apply-patch/hook > blocks a malformed @@ at runtime before native execution [0.44ms]
+(pass) apply-patch/hook > blocks a malformed Add File at runtime before native execution [0.25ms]
+(pass) apply-patch/hook > blocks internal guard errors before native execution [1.76ms]
+(pass) apply-patch/hook > blocks a dangerous indented case as verification [0.89ms]
+(pass) apply-patch/hook > rewrites anchored insertion to avoid native EOF handling [1.92ms]
+(pass) apply-patch/hook > blocks a pure insertion when the anchor is missing [0.76ms]
+(pass) apply-patch/hook > blocks a pure insertion when the anchor is ambiguous [0.77ms]
+(pass) apply-patch/hook > blocks real patch ambiguity before native execution [0.76ms]
+(pass) apply-patch/hook > rewrites only the update hunk in a patch with add + update [3.13ms]
+(pass) apply-patch/hook > passes through sibling-directory targets outside root/worktree before native execution [0.75ms]
+(pass) apply-patch/hook > normalizes an absolute path inside worktree even when it is outside root [0.70ms]
+(pass) apply-patch/hook > passes through mixed patches with outside paths without partial rewrite [1.34ms]
+(pass) apply-patch/hook > keeps normal behavior for patches entirely inside root/worktree [0.74ms]
+(pass) apply-patch/hook > does not expose the tool.execute.after hook [0.03ms]
+(pass) apply-patch/hook > does not alter an exact patch [0.72ms]
+
+src/hooks/apply-patch/resolution.test.ts:
+(pass) apply-patch/resolution > readFileLines removes the final synthetic empty line [1.12ms]
+(pass) apply-patch/resolution > resolveChunkStart uses change_context as an anchor when present [0.04ms]
+(pass) apply-patch/resolution > locateChunk rescues prefix/suffix and preserves new_lines [0.12ms]
+(pass) apply-patch/resolution > locateChunk canonicalizes a tolerant unicode match [0.05ms]
+(pass) apply-patch/resolution > locateChunk canonicalizes a tolerant trim-end match [0.04ms]
+(pass) apply-patch/resolution > locateChunk no longer rescues a trim-only stale patch [0.06ms]
+(pass) apply-patch/resolution > locateChunk no longer canonicalizes a dangerous indented case [0.06ms]
+(pass) apply-patch/resolution > locateChunk preserves a real final blank line when it exists in the file [0.03ms]
+(pass) apply-patch/resolution > locateChunk fails if the patch adds a non-existent final blank line [0.07ms]
+(pass) apply-patch/resolution > deriveNewContent resolves EOF updates [0.78ms]
+(pass) apply-patch/resolution > deriveNewContent preserves CRLF while rebuilding content [0.53ms]
+(pass) apply-patch/resolution > deriveNewContent inserts an anchored block without moving it to EOF [0.54ms]
+(pass) apply-patch/resolution > deriveNewContent supports pure insertion at EOF with a single anchor [0.49ms]
+(pass) apply-patch/resolution > resolveUpdateChunks canonicalizes EOF insertion with a tolerant anchor [0.53ms]
+(pass) apply-patch/resolution > resolveUpdateChunks canonicalizes non-EOF insertion with a trim-end anchor [0.54ms]
+(pass) apply-patch/resolution > deriveNewContent fails if a pure insertion cannot find its anchor [0.47ms]
+(pass) apply-patch/resolution > deriveNewContent fails if a pure insertion has an ambiguous anchor [0.47ms]
+(pass) apply-patch/resolution > deriveNewContent fails if a tolerant insertion anchor is ambiguous [0.47ms]
+(pass) apply-patch/resolution > deriveNewContent fails if a later chunk remains ambiguous [0.49ms]
+(pass) apply-patch/resolution > deriveNewContent rescues a stale EOF and preserves the final update [0.55ms]
+(pass) apply-patch/resolution > applyHits preserves the final newline [0.03ms]
+(pass) apply-patch/resolution > applyHits can preserve a file without a final newline [0.02ms]
+
+src/hooks/json-error-recovery/index.test.ts:
+(pass) json-error-recovery hook > appends reminder when output includes JSON parse error [0.19ms]
+(pass) json-error-recovery hook > does not append reminder for normal output [0.10ms]
+(pass) json-error-recovery hook > does not append reminder for excluded tools [0.09ms]
+(pass) json-error-recovery hook > does not append duplicate reminder on repeated execution [0.11ms]
+(pass) json-error-recovery hook > ignores non-string output values [0.11ms]
+(pass) json-error-recovery hook > pattern list detects known JSON parse errors [0.04ms]
+(pass) json-error-recovery hook > exclude list contains content-heavy tools [0.05ms]
+
+src/hooks/context-budget/index.test.ts:
+(pass) createContextBudgetHook > does not trim when under budget [0.26ms]
+(pass) createContextBudgetHook > trims when over budget [1.09ms]
+(pass) createContextBudgetHook > does nothing without sessionID [0.08ms]
+(pass) createContextBudgetHook > does nothing when model not recorded [0.06ms]
+(pass) createContextBudgetHook > disabled hook does nothing [0.75ms]
+(pass) createContextBudgetHook > clears session on request [0.10ms]
+(pass) createContextBudgetHook > ignores non-message.updated events [0.04ms]
+
+src/hooks/phase-reminder/index.test.ts:
+(pass) createPhaseReminderHook > appends reminder for orchestrator sessions [0.21ms]
+(pass) createPhaseReminderHook > skips non-orchestrator sessions [0.06ms]
+(pass) createPhaseReminderHook > does not mutate internal notification turns [0.12ms]
+(pass) createPhaseReminderHook > does not append duplicate reminder [0.11ms]
+
+src/hooks/foreground-fallback/index.test.ts:
+(pass) isRateLimitError > returns true for 429 status code [0.72ms]
+(pass) isRateLimitError > returns true for "rate limit" in message [0.04ms]
+(pass) isRateLimitError > returns true for "quota exceeded" in responseBody [0.04ms]
+(pass) isRateLimitError > returns true for "usage exceeded" [0.03ms]
+(pass) isRateLimitError > returns true for "overloaded" [0.02ms]
+(pass) isRateLimitError > returns false for non-rate-limit error [0.06ms]
+(pass) isRateLimitError > returns false for null [0.02ms]
+(pass) isRateLimitError > returns false for non-object
+(pass) ForegroundFallbackManager (disabled) > does nothing when enabled=false [0.32ms]
+(pass) ForegroundFallbackManager session.error > triggers fallback on rate-limit session.error [503.22ms]
+(pass) ForegroundFallbackManager session.error > does nothing when error is not a rate limit [0.17ms]
+(pass) ForegroundFallbackManager session.error > does nothing when no chain configured for session [0.14ms]
+(pass) ForegroundFallbackManager session.error > does not abort when promptAsync is unavailable [0.13ms]
+(pass) ForegroundFallbackManager session.error > continues fallback when abort rejects [500.77ms]
+(pass) ForegroundFallbackManager message.updated > tracks model from message.updated and falls back on error [503.29ms]
+(pass) ForegroundFallbackManager message.updated > uses agent name from message.updated to select correct chain [500.48ms]
+(pass) ForegroundFallbackManager session.status > triggers fallback on retry status with rate limit message [500.98ms]
+(pass) ForegroundFallbackManager session.status > ignores session.status with non-rate-limit retry message [1.38ms]
+(pass) ForegroundFallbackManager chain exhaustion > does not call promptAsync when the only chain model is already the current model [0.22ms]
+(pass) ForegroundFallbackManager chain exhaustion > does not call promptAsync when all chain models have been tried [500.71ms]
+(pass) ForegroundFallbackManager deduplication > ignores a second trigger within dedup window for same session [503.12ms]
+(pass) ForegroundFallbackManager deduplication > different sessions are not deduplicated against each other [1001.48ms]
+(pass) ForegroundFallbackManager subagent.session.created > records agent name from subagent.session.created when agentName provided [503.19ms]
+(pass) ForegroundFallbackManager session.deleted > cleans up session state on session.deleted preventing memory leaks [500.99ms]
+(pass) ForegroundFallbackManager session.deleted > ignores session.deleted with no sessionID [1.46ms]
+(pass) ForegroundFallbackManager session.deleted > cleans up state using info.id shape (top-level session deletion) [502.21ms]
+(pass) ForegroundFallbackManager resolveChain cross-agent isolation > does not use another agent chain when known agent has no configured chain [0.25ms]
+(pass) ForegroundFallbackManager resolveChain cross-agent isolation > uses cross-agent last-resort only when agent name is unknown [500.78ms]
+
+src/hooks/task-session-manager/index.test.ts:
+(pass) task-session-manager hook > stores task sessions and injects resumable-session block into user message [1.00ms]
+(pass) task-session-manager hook > does not expose a system transform for resumable sessions [0.05ms]
+(pass) task-session-manager hook > resolves remembered aliases to real task ids before execution [0.17ms]
+(pass) task-session-manager hook > tracks files read by child sessions in resumable message context [0.66ms]
+(pass) task-session-manager hook > accumulates multiple reads and hides tiny read context [0.34ms]
+(pass) task-session-manager hook > counts overlapping repeated reads once per unique line [0.29ms]
+(pass) task-session-manager hook > uses configured read context thresholds [0.34ms]
+(pass) task-session-manager hook > ignores reads from unmanaged child sessions [0.21ms]
+(pass) task-session-manager hook > prunes read context when remembered sessions are evicted [0.53ms]
+(pass) task-session-manager hook > drops stale remembered sessions and falls back to fresh [0.38ms]
+(pass) task-session-manager hook > drops resumed predecessor when success returns a new task id [0.19ms]
+(pass) task-session-manager hook > does not drop remembered session on non-runtime session text [0.16ms]
+(pass) task-session-manager hook > ignores sessions that are not orchestrator-managed [0.11ms]
+(pass) task-session-manager hook > cleans up remembered sessions when parent or child is deleted [0.24ms]
+(pass) task-session-manager hook > cleans pending calls when parent session is deleted [0.13ms]
+(pass) task-session-manager hook > deduplicates pending call order when a resume call is recorded twice [0.24ms]
+
+src/hooks/filter-available-skills/index.test.ts:
+(pass) filterAvailableSkillsText > keeps only allowed skills using exact skill names [0.23ms]
+(pass) filterAvailableSkillsText > renders No skills available when nothing is allowed [0.05ms]
+(pass) createFilterAvailableSkillsHook > filters system prompt skill blocks for explicit agent skills [0.32ms]
+(pass) createFilterAvailableSkillsHook > shows no skills for agents configured with an empty skills list [0.10ms]
+(pass) createFilterAvailableSkillsHook > preserves orchestrator default wildcard allow [0.11ms]
+(pass) createFilterAvailableSkillsHook > supports wildcard allow with explicit exclusions [0.10ms]
+(pass) createFilterAvailableSkillsHook > defaults to orchestrator when no agent is present [0.09ms]
+(pass) createFilterAvailableSkillsHook > filters multiple skill blocks across messages [0.14ms]
+(pass) createFilterAvailableSkillsHook > reuses permission rules without caching the final skills block text [0.16ms]
+
+src/hooks/tool-retry/index.test.ts:
+(pass) Tool Retry Hook > should exist [0.03ms]
+
+src/hooks/write-constraint/index.test.ts:
+(pass) createWriteConstraintHook > edit tool (newString) > allows newString under 100 lines [0.23ms]
+(pass) createWriteConstraintHook > edit tool (newString) > allows newString exactly 100 lines [0.11ms]
+(pass) createWriteConstraintHook > edit tool (newString) > rejects newString over 100 lines [0.11ms]
+(pass) createWriteConstraintHook > edit tool (newString) > rejects large newString with descriptive message [0.15ms]
+(pass) createWriteConstraintHook > write tool (content) > allows content under 100 lines [0.06ms]
+(pass) createWriteConstraintHook > write tool (content) > allows content exactly 100 lines [0.08ms]
+(pass) createWriteConstraintHook > write tool (content) > rejects content over 100 lines [0.10ms]
+(pass) createWriteConstraintHook > case-insensitive tool names > works with Edit (capitalized) [0.11ms]
+(pass) createWriteConstraintHook > case-insensitive tool names > works with Write (capitalized) [0.10ms]
+(pass) createWriteConstraintHook > non-write tools > ignores Read tool [0.15ms]
+(pass) createWriteConstraintHook > non-write tools > ignores Bash tool [0.12ms]
+(pass) createWriteConstraintHook > non-write tools > ignores unknown tool names [0.12ms]
+(pass) createWriteConstraintHook > edge cases > does nothing when args is undefined [0.05ms]
+(pass) createWriteConstraintHook > edge cases > does nothing when content/newString is undefined [0.04ms]
+(pass) createWriteConstraintHook > edge cases > does nothing when content/newString is empty string [0.04ms]
+(pass) createWriteConstraintHook > edge cases > handles single-line content [0.06ms]
+(pass) createWriteConstraintHook > edge cases > error message mentions chunking guidance [0.10ms]
+
+src/hooks/delegate-task-retry/index.test.ts:
+(pass) delegate-task-retry hook > appends guidance for task argument errors [0.25ms]
+(pass) delegate-task-retry hook > appends guidance for task agent allowlist errors [0.09ms]
+(pass) delegate-task-retry hook > does nothing for unrelated tool output [0.05ms]
+
+src/hooks/todo-continuation/todo-hygiene.test.ts:
+(pass) todo hygiene > new request clears pending state from the previous turn [0.46ms]
+(pass) todo hygiene > does not arm before the current request calls todowrite [0.07ms]
+(pass) todo hygiene > arms after the first relevant tool following todowrite [0.13ms]
+(pass) todo hygiene > upgrades to final-active on a later round [0.14ms]
+(pass) todo hygiene > todowrite can arm final-active immediately [0.10ms]
+(pass) todo hygiene > once final-active is armed, later tools skip extra todo lookups in the same round [0.14ms]
+(pass) todo hygiene > shouldInject rejection prevents reset lookup and reminders [0.09ms]
+(pass) todo hygiene > reading a pending reminder does not inspect todos [0.13ms]
+(pass) todo hygiene > todowrite lookup failures do not disable the current request [0.21ms]
+(pass) todo hygiene > session.deleted clears all state [0.15ms]
+
+src/hooks/todo-continuation/index.test.ts:
+(pass) createTodoContinuationHook > tool toggle > calling auto_continue execute with { enabled: true } sets state [0.36ms]
+(pass) createTodoContinuationHook > tool toggle > calling auto_continue execute with { enabled: false } disables [0.11ms]
+(pass) createTodoContinuationHook > todo hygiene routing > does not inject hygiene reminder for unknown non-orchestrator session [0.43ms]
+(pass) createTodoContinuationHook > todo hygiene routing > does not expose a system transform handler [0.09ms]
+(pass) createTodoContinuationHook > todo hygiene routing > injects hygiene reminder into latest user message after todowrite activity [0.57ms]
+(pass) createTodoContinuationHook > todo hygiene routing > skips hygiene reminder when todo state lookup times out [1002.56ms]
+(pass) createTodoContinuationHook > todo hygiene routing > compaction-like transform does not consume pending reminder [0.55ms]
+(pass) createTodoContinuationHook > todo hygiene routing > new request clears stale pending reminder state [0.39ms]
+(pass) createTodoContinuationHook > todo hygiene routing > attachment-only requests reset stale state without synthetic text parts [0.26ms]
+(pass) createTodoContinuationHook > todo hygiene routing > falls back to known orchestrator session when transform message lacks sessionID [0.25ms]
+(pass) createTodoContinuationHook > todo hygiene routing > does not promote sessions with missing agent metadata to orchestrator [0.13ms]
+(pass) createTodoContinuationHook > todo hygiene routing > known orchestrator sessions still process request boundaries when agent metadata is missing [0.27ms]
+(pass) createTodoContinuationHook > todo hygiene routing > the same user message id consumes pending reminder even if array index shifts [0.27ms]
+(pass) createTodoContinuationHook > todo hygiene routing > a new user message id resets the request even if text is unchanged [0.36ms]
+(pass) createTodoContinuationHook > todo hygiene routing > a repeated text without message ids resets when a later user turn appears [0.39ms]
+(pass) createTodoContinuationHook > todo hygiene routing > messages without inferable sessionID clear stale state for known orchestrators [0.35ms]
+(pass) createTodoContinuationHook > todo hygiene routing > does not inject from continuation-like wording alone [0.16ms]
+(pass) createTodoContinuationHook > todo hygiene routing > rearms on activity after todowrite even if request wording is continuation-like [0.18ms]
+(pass) createTodoContinuationHook > todo hygiene routing > final active todo after todowrite uses the stronger finishing reminder [0.25ms]
+(pass) createTodoContinuationHook > continuation scheduling > session idle + enabled + incomplete todos → schedules continuation [61.54ms]
+(pass) createTodoContinuationHook > continuation scheduling > disabled → no continuation [60.34ms]
+(pass) createTodoContinuationHook > continuation scheduling > last message is a question → skip [63.11ms]
+(pass) createTodoContinuationHook > continuation scheduling > question detection with question mark → skip [60.53ms]
+(pass) createTodoContinuationHook > continuation scheduling > question detection with "would you like" phrase → skip [62.83ms]
+(pass) createTodoContinuationHook > continuation scheduling > max continuations reached → skip [183.68ms]
+(pass) createTodoContinuationHook > continuation scheduling > abort suppress window → skip [100.65ms]
+(pass) createTodoContinuationHook > continuation scheduling > session busy → cancel pending timer [555.27ms]
+(pass) createTodoContinuationHook > continuation scheduling > sub-agent session.busy does NOT cancel orchestrator timer [302.79ms]
+(pass) createTodoContinuationHook > continuation scheduling > all todos complete → skip [60.63ms]
+(pass) createTodoContinuationHook > continuation scheduling > non-orchestrator session → skip [120.70ms]
+(pass) createTodoContinuationHook > continuation scheduling > cooldownMs from config [160.77ms]
+(pass) createTodoContinuationHook > event handling - session.error > MessageAbortedError sets suppress window [100.61ms]
+(pass) createTodoContinuationHook > event handling - session.error > AbortError sets suppress window [102.93ms]
+(pass) createTodoContinuationHook > event handling - session.error > other errors do not set suppress window [60.57ms]
+(pass) createTodoContinuationHook > event handling - session.deleted > clears pending timer on session delete [304.10ms]
+(pass) createTodoContinuationHook > event handling - session.deleted > sub-agent session.deleted does NOT cancel orchestrator timer [300.94ms]
+(pass) createTodoContinuationHook > event handling - session.deleted > resets orchestrator session when deleted session matches [125.62ms]
+(pass) createTodoContinuationHook > error handling > fetch todos failure → skips continuation [60.74ms]
+(pass) createTodoContinuationHook > error handling > fetch messages failure → skips continuation [63.24ms]
+(pass) createTodoContinuationHook > command.execute.before interception > unrelated command → no interception [0.34ms]
+(pass) createTodoContinuationHook > command.execute.before interception > /auto-continue enables and injects continuation when incomplete todos [0.20ms]
+(pass) createTodoContinuationHook > command.execute.before interception > /auto-continue enables but no continuation when all todos complete [0.15ms]
+(pass) createTodoContinuationHook > command.execute.before interception > /auto-continue toggles off when already enabled [0.15ms]
+(pass) createTodoContinuationHook > command.execute.before interception > /auto-continue resets consecutive continuations on toggle [121.76ms]
+(pass) createTodoContinuationHook > command.execute.before interception > /auto-continue with todo fetch failure → enables without continuation [0.36ms]
+(pass) createTodoContinuationHook > config defaults > default config: maxContinuations = 5, cooldownMs = 3000 [3001.27ms]
+(pass) createTodoContinuationHook > council review findings > CRITICAL-1: counter bypass via session.status→busy > counter persists when busy fires during auto-injection [206.53ms]
+(pass) createTodoContinuationHook > council review findings > CRITICAL-2: disable cancels pending timer > tool disable during cooldown prevents injection [113.71ms]
+(pass) createTodoContinuationHook > council review findings > CRITICAL-2: disable cancels pending timer > command disable during cooldown prevents injection [113.47ms]
+(pass) createTodoContinuationHook > council review findings > MAJOR-1: session.deleted resets counter > deleted orchestrator session resets counter for next session [244.06ms]
+(pass) createTodoContinuationHook > council review findings > MAJOR-2: suppressUntil cleared on re-enable > tool re-enable clears suppress window [60.51ms]
+(pass) createTodoContinuationHook > council review findings > MAJOR-2: suppressUntil cleared on re-enable > command re-enable clears suppress window [63.20ms]
+(pass) createTodoContinuationHook > council review findings > error paths > prompt failure in timer callback is handled gracefully [121.73ms]
+(pass) createTodoContinuationHook > council review findings > edge cases > session.idle with missing sessionID returns early [0.28ms]
+(pass) createTodoContinuationHook > council review findings > edge cases > session.deleted with properties.info.id path [122.68ms]
+(pass) createTodoContinuationHook > council review findings > edge cases > cooldownMs = 0 fires on next tick [10.53ms]
+(pass) createTodoContinuationHook > council review findings > MAJOR-3: double-fire prevention > rapid idle events during prompt delivery — single continuation [133.79ms]
+(pass) createTodoContinuationHook > council review findings > MAJOR-4: command explicit on|off arguments > command "on" keeps enabled state when already enabled [1.60ms]
+(pass) createTodoContinuationHook > council review findings > MAJOR-4: command explicit on|off arguments > command "off" keeps disabled state when already disabled [0.12ms]
+(pass) createTodoContinuationHook > council review findings > MAJOR-4: command explicit on|off arguments > command with no argument toggles state [0.14ms]
+(pass) createTodoContinuationHook > session routing and notification cancellation > chat.message registers orchestrator sessions without first-idle lockout [121.82ms]
+(pass) createTodoContinuationHook > session routing and notification cancellation > chat.message without agent does not block legacy first-idle fallback [60.45ms]
+(pass) createTodoContinuationHook > session routing and notification cancellation > subagent chat.message prevents first-idle fallback registration [62.91ms]
+(pass) createTodoContinuationHook > session routing and notification cancellation > session.status idle triggers continuation like session.idle [60.43ms]
+(pass) createTodoContinuationHook > session routing and notification cancellation > deleting another orchestrator does not cancel the active session timer [60.48ms]
+(pass) createTodoContinuationHook > session routing and notification cancellation > deleting all orchestrators restores legacy first-idle fallback [60.42ms]
+(pass) createTodoContinuationHook > session routing and notification cancellation > countdown notification busy status does not reset max-continuation counter [204.10ms]
+(pass) createTodoContinuationHook > session routing and notification cancellation > late countdown notification busy status does not cancel continuation timer [70.55ms]
+(pass) createTodoContinuationHook > session routing and notification cancellation > countdown notification busy status does not cancel continuation timer [62.43ms]
+(pass) createTodoContinuationHook > auto-enable on todo count > autoEnable=true, todos >= threshold → auto-enables and continues [60.42ms]
+(pass) createTodoContinuationHook > auto-enable on todo count > autoEnable=true, todos < threshold → does NOT auto-enable [62.05ms]
+(pass) createTodoContinuationHook > auto-enable on todo count > autoEnable=false (default) → never auto-enables regardless of todo count [60.44ms]
+(pass) createTodoContinuationHook > auto-enable on todo count > auto-enable does not re-enable if already manually enabled [63.33ms]
+(pass) createTodoContinuationHook > auto-enable on todo count > auto-enable respects custom threshold [60.36ms]
+(pass) createTodoContinuationHook > auto-enable on todo count > auto-enable skipped for non-orchestrator session [122.64ms]
+(pass) createTodoContinuationHook > auto-enable on todo count > auto-enable with todo fetch failure → no auto-enable, no crash [60.52ms]
+(pass) createTodoContinuationHook > auto-enable on todo count > auto-enable resets consecutive counter and suppress window [123.62ms]
+(pass) createTodoContinuationHook > auto-enable on todo count > auto-enable counts incomplete todos only, not completed [60.39ms]
+
+src/hooks/post-file-tool-nudge/index.test.ts:
+(pass) post-file-tool-nudge hook > appends delegation reminder to tool output [0.17ms]
+(pass) post-file-tool-nudge hook > does not duplicate reminder in same tool output [0.10ms]
+(pass) post-file-tool-nudge hook > deduplicates multiple Read/Write calls in same session [0.10ms]
+(pass) post-file-tool-nudge hook > ignores non-file tools [0.11ms]
+(pass) post-file-tool-nudge hook > skips injection when shouldInject returns false [0.09ms]
+(pass) post-file-tool-nudge hook > ignores Read/Write without sessionID [0.05ms]
+
+src/hooks/tool-calling-resilience/hook.test.ts:
+(pass) patterns > detects file not found errors [0.11ms]
+(pass) patterns > detects permission denied errors [0.07ms]
+(pass) patterns > detects network timeout errors [0.05ms]
+(pass) patterns > detects rate limit errors [0.16ms]
+(pass) patterns > detects invalid argument errors [0.03ms]
+(pass) patterns > detects generic errors when no specific pattern matches [0.07ms]
+(pass) patterns > returns null for non-error output [0.04ms]
+(pass) patterns > returns null for empty output [0.02ms]
+(pass) patterns > has unique pattern IDs [0.04ms]
+(pass) tracker > records failures [0.13ms]
+(pass) tracker > increments count on repeated failures [0.04ms]
+(pass) tracker > detects loops after threshold [0.05ms]
+(pass) tracker > does not detect loop before threshold [0.03ms]
+(pass) tracker > resets session data [0.07ms]
+(pass) guidance > includes fix hint for retryable errors [0.21ms]
+(pass) guidance > warns about non-retryable errors [0.07ms]
+(pass) guidance > detects retry loops [0.04ms]
+(pass) EXCLUDED_TOOLS_WITH_OWN_HOOKS > contains expected tools [0.02ms]
+
+src/hooks/cot-enforcement/index.test.ts:
+(pass) createCoTEnforcementHook > injects CoT instruction for orchestrator [0.20ms]
+(pass) createCoTEnforcementHook > injects CoT instruction for oracle [0.09ms]
+(pass) createCoTEnforcementHook > skips non-target agents [0.07ms]
+(pass) createCoTEnforcementHook > skips when sessionID is missing [0.06ms]
+(pass) createCoTEnforcementHook > skips when agent is unknown [0.06ms]
+(pass) createCoTEnforcementHook > does not duplicate injection [0.07ms]
+(pass) createCoTEnforcementHook > respects custom targetAgents [0.08ms]
+
+src/hooks/auto-update-checker/cache.test.ts:
+(pass) auto-update-checker/cache > resolveInstallContext > detects OpenCode packages install root from runtime package path [1.47ms]
+(pass) auto-update-checker/cache > resolveInstallContext > does not fall back to legacy cache when runtime path is active but wrapper root is invalid [0.58ms]
+(pass) auto-update-checker/cache > preparePackageUpdate > returns null when no install context is available [0.75ms]
+(pass) auto-update-checker/cache > preparePackageUpdate > updates packages wrapper dependency and removes installed package [0.83ms]
+(pass) auto-update-checker/cache > preparePackageUpdate > keeps working when dependency is already on target version [0.56ms]
+
+src/hooks/auto-update-checker/checker.test.ts:
+(pass) auto-update-checker/checker > extractChannel > returns latest for null or empty [0.06ms]
+(pass) auto-update-checker/checker > extractChannel > returns tag if version starts with non-digit [0.05ms]
+(pass) auto-update-checker/checker > extractChannel > extracts channel from prerelease version [0.11ms]
+(pass) auto-update-checker/checker > extractChannel > returns latest for standard versions [0.03ms]
+(pass) auto-update-checker/checker > getLocalDevVersion > returns null if no local dev path in config [0.12ms]
+(pass) auto-update-checker/checker > getLocalDevVersion > returns version from local package.json if path exists [0.22ms]
+(pass) auto-update-checker/checker > findPluginEntry > detects latest version entry [0.19ms]
+(pass) auto-update-checker/checker > findPluginEntry > detects pinned version entry [0.15ms]
+
+src/hooks/auto-update-checker/index.test.ts:
+(pass) auto-update-checker/index > uses resolved install root for auto-update installs [0.70ms]
+(pass) auto-update-checker/index > skips background update for local dev installs without startup toast [3.38ms]
+(pass) auto-update-checker/index > shows success toast after updating the active install root [2.22ms]
+(pass) auto-update-checker/index > shows notification-only toast when auto-update is disabled [1.81ms]
+(pass) auto-update-checker/index > shows prepare failure toast and skips installation when active install cannot be resolved [1.83ms]
+(pass) auto-update-checker/index > shows install failure toast without telling users to restart [1.86ms]
+
+src/multiplexer/tmux/index.test.ts:
+(pass) TmuxMultiplexer > coalesces layout application after bursty pane spawns [302.34ms]
+(pass) TmuxMultiplexer > logs and stops layout sequence when a tmux layout command fails [0.25ms]
+(pass) TmuxMultiplexer > direct applyLayout cancels a pending debounced layout [300.42ms]
+
+src/skills/codemap/scripts/codemap.test.ts:
+(pass) PatternMatcher > matches expected paths [1.70ms]
+(pass) hash helpers > computes file hash [0.25ms]
+(pass) hash helpers > computes stable folder hash [0.58ms]
+(pass) selectFiles > respects include and exclude patterns [0.46ms]
+Migrated .slim/cartography.json -> .slim/codemap.json
+(pass) loadState > migrates legacy cartography state [0.26ms]
+
+2 tests failed:
+(fail) multiplexer factory > returns a fresh tmux instance per call [0.22ms]
+(fail) multiplexer factory > returns a fresh auto-detected tmux instance per call [0.16ms]
+
+ 877 pass
+ 2 fail
+ 1667 expect() calls
+Ran 879 tests across 60 files. [26.01s]

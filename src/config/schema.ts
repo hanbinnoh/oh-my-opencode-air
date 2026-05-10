@@ -48,11 +48,11 @@ export const ManualAgentPlanSchema = z
 
 export const ManualPlanSchema = z
   .object({
-    orchestrator: ManualAgentPlanSchema.optional(),
-    oracle: ManualAgentPlanSchema.optional(),
-    explorer: ManualAgentPlanSchema.optional(),
-    fixer: ManualAgentPlanSchema.optional(),
-    librarian: ManualAgentPlanSchema.optional(),
+    orchestrator: ManualAgentPlanSchema,
+    oracle: ManualAgentPlanSchema,
+    explorer: ManualAgentPlanSchema,
+    fixer: ManualAgentPlanSchema,
+    librarian: ManualAgentPlanSchema,
   })
   .strict();
 
@@ -229,6 +229,14 @@ export const FailoverConfigSchema = z.object({
 
 export type FailoverConfig = z.infer<typeof FailoverConfigSchema>;
 
+export const ContextBudgetConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  charsPerToken: z.number().min(1).max(20).optional(),
+  modelLimits: z.record(z.string(), z.number().min(1)).optional(),
+});
+
+export type ContextBudgetConfig = z.infer<typeof ContextBudgetConfigSchema>;
+
 function validateCustomOnlyPromptFields(
   overrides: Record<string, z.infer<typeof AgentOverrideConfigSchema>>,
   ctx: z.RefinementCtx,
@@ -240,6 +248,11 @@ function validateCustomOnlyPromptFields(
       AGENT_ALIASES[name] !== undefined;
 
     if (!isBuiltInOrAlias) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: [...pathPrefix, name],
+        message: `Unauthorized agent type detected: ${name}. Only orchestrator, explorer, fixer, oracle, and librarian are allowed in the air version.`,
+      });
       continue;
     }
 
@@ -247,7 +260,7 @@ function validateCustomOnlyPromptFields(
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: [...pathPrefix, name, 'prompt'],
-        message: 'prompt is only supported for custom agents',
+        message: 'prompt is not supported in the air version',
       });
     }
 
@@ -255,7 +268,7 @@ function validateCustomOnlyPromptFields(
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: [...pathPrefix, name, 'orchestratorPrompt'],
-        message: 'orchestratorPrompt is only supported for custom agents',
+        message: 'orchestratorPrompt is not supported in the air version',
       });
     }
   }
@@ -295,6 +308,7 @@ export const PluginConfigSchema = z
     sessionManager: SessionManagerConfigSchema.optional(),
     todoContinuation: TodoContinuationConfigSchema.optional(),
     fallback: FailoverConfigSchema.optional(),
+    contextBudget: ContextBudgetConfigSchema.optional(),
   })
   .superRefine((value, ctx) => {
     if (value.agents) {

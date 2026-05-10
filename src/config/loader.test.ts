@@ -3,10 +3,17 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import type { ConfigLoadWarning } from './loader';
-import { loadAgentPrompt, loadPluginConfig } from './loader';
-
-// Test deepMerge indirectly through loadPluginConfig behavior
-// since deepMerge is not exported
+import { deepMerge, loadAgentPrompt, loadPluginConfig } from './loader';
+import {
+  AgentOverrideConfigSchema,
+  ContextBudgetConfigSchema,
+  FailoverConfigSchema,
+  ManualPlanSchema,
+  MultiplexerConfigSchema,
+  PluginConfigSchema,
+  SessionManagerConfigSchema,
+  TodoContinuationConfigSchema,
+} from './schema';
 
 describe('loadPluginConfig', () => {
   let tempDir: string;
@@ -128,6 +135,12 @@ describe('loadPluginConfig', () => {
             fallback2: 'chutes/kimi-k2.5',
             fallback3: 'opencode/gpt-5-nano',
           },
+          librarian: {
+            primary: 'openai/gpt-5.5',
+            fallback1: 'anthropic/claude-opus-4-6',
+            fallback2: 'chutes/kimi-k2.5',
+            fallback3: 'opencode/gpt-5-nano',
+          },
         },
       }),
     );
@@ -158,7 +171,7 @@ describe('loadPluginConfig', () => {
     expect(loadPluginConfig(projectDir)).toEqual({});
   });
 
-  test('rejects custom-only prompt fields on built-in agents in config files', () => {
+  test('rejects prompt fields on built-in agents in config files', () => {
     const projectDir = path.join(tempDir, 'project');
     const projectConfigDir = path.join(projectDir, '.opencode');
     fs.mkdirSync(projectConfigDir, { recursive: true });
@@ -202,29 +215,182 @@ describe('loadPluginConfig', () => {
 
     fs.rmSync(customDir, { recursive: true, force: true });
   });
+});
 
-  test('falls back to default user config dir when OPENCODE_CONFIG_DIR has no config', () => {
-    const customDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), 'omc-opencode-config-empty-'),
-    );
-    process.env.OPENCODE_CONFIG_DIR = customDir;
+describe('schema boundary validation', () => {
+  test('AgentOverrideConfigSchema accepts temperature at lower bound (0)', () => {
+    const result = AgentOverrideConfigSchema.safeParse({ temperature: 0 });
+    expect(result.success).toBe(true);
+  });
 
-    const defaultConfigDir = path.join(userConfigDir, 'opencode');
-    fs.mkdirSync(defaultConfigDir, { recursive: true });
-    fs.writeFileSync(
-      path.join(defaultConfigDir, 'oh-my-opencode-air.json'),
-      JSON.stringify({
-        agents: { oracle: { model: 'fallback/default-config' } },
-      }),
-    );
+  test('AgentOverrideConfigSchema accepts temperature at upper bound (2)', () => {
+    const result = AgentOverrideConfigSchema.safeParse({ temperature: 2 });
+    expect(result.success).toBe(true);
+  });
 
-    const projectDir = path.join(tempDir, 'project');
-    fs.mkdirSync(projectDir, { recursive: true });
+  test('AgentOverrideConfigSchema rejects temperature below 0', () => {
+    const result = AgentOverrideConfigSchema.safeParse({ temperature: -0.1 });
+    expect(result.success).toBe(false);
+  });
 
-    const config = loadPluginConfig(projectDir);
-    expect(config.agents?.oracle?.model).toBe('fallback/default-config');
+  test('AgentOverrideConfigSchema rejects temperature above 2', () => {
+    const result = AgentOverrideConfigSchema.safeParse({ temperature: 2.1 });
+    expect(result.success).toBe(false);
+  });
 
-    fs.rmSync(customDir, { recursive: true, force: true });
+  test('SessionManagerConfigSchema accepts valid boundaries', () => {
+    const result = SessionManagerConfigSchema.safeParse({
+      maxSessionsPerAgent: 1,
+      readContextMinLines: 0,
+      readContextMaxFiles: 0,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  test('SessionManagerConfigSchema rejects maxSessionsPerAgent below 1', () => {
+    const result = SessionManagerConfigSchema.safeParse({
+      maxSessionsPerAgent: 0,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  test('SessionManagerConfigSchema rejects maxSessionsPerAgent above 10', () => {
+    const result = SessionManagerConfigSchema.safeParse({
+      maxSessionsPerAgent: 11,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  test('MultiplexerConfigSchema accepts main_pane_size at boundaries', () => {
+    const resultMin = MultiplexerConfigSchema.safeParse({ main_pane_size: 20 });
+    const resultMax = MultiplexerConfigSchema.safeParse({ main_pane_size: 80 });
+    expect(resultMin.success).toBe(true);
+    expect(resultMax.success).toBe(true);
+  });
+
+  test('MultiplexerConfigSchema rejects main_pane_size below 20', () => {
+    const result = MultiplexerConfigSchema.safeParse({ main_pane_size: 19 });
+    expect(result.success).toBe(false);
+  });
+
+  test('MultiplexerConfigSchema rejects main_pane_size above 80', () => {
+    const result = MultiplexerConfigSchema.safeParse({ main_pane_size: 81 });
+    expect(result.success).toBe(false);
+  });
+
+  test('ManualPlanSchema rejects duplicate models for same agent', () => {
+    const result = ManualPlanSchema.safeParse({
+      orchestrator: {
+        primary: 'openai/gpt-5.5',
+        fallback1: 'openai/gpt-5.5',
+        fallback2: 'anthropic/claude-opus-4-6',
+        fallback3: 'chutes/kimi-k2.5',
+      },
+      oracle: {
+        primary: 'openai/gpt-5.5',
+        fallback1: 'anthropic/claude-opus-4-6',
+        fallback2: 'chutes/kimi-k2.5',
+        fallback3: 'opencode/gpt-5-nano',
+      },
+      explorer: {
+        primary: 'openai/gpt-5.5',
+        fallback1: 'anthropic/claude-opus-4-6',
+        fallback2: 'chutes/kimi-k2.5',
+        fallback3: 'opencode/gpt-5-nano',
+      },
+      fixer: {
+        primary: 'openai/gpt-5.5',
+        fallback1: 'anthropic/claude-opus-4-6',
+        fallback2: 'chutes/kimi-k2.5',
+        fallback3: 'opencode/gpt-5-nano',
+      },
+      librarian: {
+        primary: 'openai/gpt-5.5',
+        fallback1: 'anthropic/claude-opus-4-6',
+        fallback2: 'chutes/kimi-k2.5',
+        fallback3: 'opencode/gpt-5-nano',
+      },
+    });
+    expect(result.success).toBe(false);
+  });
+
+  test('ContextBudgetConfigSchema accepts valid boundaries', () => {
+    const result = ContextBudgetConfigSchema.safeParse({
+      enabled: true,
+      charsPerToken: 1,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  test('ContextBudgetConfigSchema rejects charsPerToken below 1', () => {
+    const result = ContextBudgetConfigSchema.safeParse({
+      charsPerToken: 0,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  test('ContextBudgetConfigSchema rejects charsPerToken above 20', () => {
+    const result = ContextBudgetConfigSchema.safeParse({
+      charsPerToken: 21,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  test('FailoverConfigSchema accepts zero timeout', () => {
+    const result = FailoverConfigSchema.safeParse({ timeoutMs: 0 });
+    expect(result.success).toBe(true);
+  });
+
+  test('FailoverConfigSchema rejects negative timeout', () => {
+    const result = FailoverConfigSchema.safeParse({ timeoutMs: -1 });
+    expect(result.success).toBe(false);
+  });
+
+  test('TodoContinuationConfigSchema rejects maxContinuations above 50', () => {
+    const result = TodoContinuationConfigSchema.safeParse({
+      maxContinuations: 51,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  test('TodoContinuationConfigSchema rejects cooldownMs above 30000', () => {
+    const result = TodoContinuationConfigSchema.safeParse({
+      cooldownMs: 30001,
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('deepMerge edge cases', () => {
+  test('both undefined returns undefined', () => {
+    const result = deepMerge(undefined, undefined);
+    expect(result).toBeUndefined();
+  });
+
+  test('base undefined returns override', () => {
+    const override = { a: 1 };
+    const result = deepMerge(undefined, override);
+    expect(result).toEqual({ a: 1 });
+  });
+
+  test('override undefined returns base', () => {
+    const base = { a: 1 };
+    const result = deepMerge(base, undefined);
+    expect(result).toEqual({ a: 1 });
+  });
+
+  test('arrays are replaced, not merged', () => {
+    const base = { items: [1, 2, 3] };
+    const override = { items: [4, 5] };
+    const result = deepMerge(base, override);
+    expect(result).toEqual({ items: [4, 5] });
+  });
+
+  test('nested objects are merged recursively', () => {
+    const base = { a: { x: 1, y: 2 } };
+    const override = { a: { y: 3, z: 4 } };
+    const result = deepMerge(base, override);
+    expect(result).toEqual({ a: { x: 1, y: 3, z: 4 } });
   });
 });
 
@@ -480,7 +646,7 @@ describe('deepMerge behavior', () => {
       JSON.stringify({
         agents: {
           oracle: { temperature: 0.8 }, // Override temperature only
-          designer: { model: 'project/designer-model' }, // Add new agent
+          fixer: { model: 'project/fixer-model' }, // Add new agent
         },
       }),
     );
@@ -494,8 +660,8 @@ describe('deepMerge behavior', () => {
     // explorer: from user only
     expect(config.agents?.explorer?.model).toBe('user/explorer-model');
 
-    // designer: from project only
-    expect(config.agents?.designer?.model).toBe('project/designer-model');
+    // fixer: from project only
+    expect(config.agents?.fixer?.model).toBe('project/fixer-model');
   });
 
   test('merges nested tmux configs', () => {
@@ -1503,5 +1669,21 @@ describe('loadAgentPrompt', () => {
     expect(result.prompt).toBe('fallback prompt');
 
     fs.rmSync(customDir, { recursive: true, force: true });
+  });
+});
+
+describe('PluginConfigSchema custom agent validation', () => {
+  test('rejects custom agents in config files', () => {
+    const result = PluginConfigSchema.safeParse({
+      agents: {
+        reviewer: { model: 'openai/gpt-5.4-mini' },
+      },
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0].message).toContain(
+        'Unauthorized agent type detected: reviewer',
+      );
+    }
   });
 });

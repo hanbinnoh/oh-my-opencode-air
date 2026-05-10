@@ -1,0 +1,242 @@
+export interface ToolErrorPattern {
+  id: string;
+  category: string;
+  patterns: RegExp[];
+  retryable: boolean;
+  fixHint: string;
+}
+
+export interface DetectedToolError {
+  patternId: string;
+  category: string;
+  retryable: boolean;
+  fixHint: string;
+  originalOutput: string;
+}
+
+export const TOOL_ERROR_PATTERNS: ToolErrorPattern[] = [
+  {
+    id: 'file_not_found',
+    category: 'filesystem',
+    patterns: [
+      /\bENOENT\b/,
+      /\bno such file or directory\b/i,
+      /\bfile not found\b/i,
+      /\bcannot find\b/i,
+      /\bdoes not exist\b/i,
+      /\bpath does not exist\b/i,
+      /\bnot found: /i,
+    ],
+    retryable: true,
+    fixHint:
+      'Verify the file path exists. Use glob or grep to find the correct path first. Check for typos in directory or file names.',
+  },
+  {
+    id: 'permission_denied',
+    category: 'filesystem',
+    patterns: [
+      /\bEACCES\b/,
+      /\bpermission denied\b/i,
+      /\baccess denied\b/i,
+      /\bnot permitted\b/i,
+      /\bunauthorized\b/i,
+      /\bforbidden\b/i,
+    ],
+    retryable: true,
+    fixHint:
+      'Check file permissions (ls -l) or run with appropriate privileges. If reading, ensure the file is readable. If writing, ensure the directory is writable.',
+  },
+  {
+    id: 'network_timeout',
+    category: 'network',
+    patterns: [
+      /\bETIMEDOUT\b/,
+      /\btimed out\b/i,
+      /\btimeout\b/i,
+      /\bconnection timed out\b/i,
+      /\brequest timeout\b/i,
+      /\bgateway timeout\b/i,
+    ],
+    retryable: true,
+    fixHint:
+      'The request timed out. This may be temporary. Wait a moment and retry. If the URL is slow, try a shorter timeout or fetch a smaller resource.',
+  },
+  {
+    id: 'network_connection',
+    category: 'network',
+    patterns: [
+      /\bECONNREFUSED\b/,
+      /\bECONNRESET\b/,
+      /\bconnection refused\b/i,
+      /\bconnection reset\b/i,
+      /\bunable to connect\b/i,
+      /\bnetwork error\b/i,
+      /\bdns lookup failed\b/i,
+      /\bgetaddrinfo\b/i,
+    ],
+    retryable: true,
+    fixHint:
+      'Connection failed. Verify the URL/host is correct and reachable. Check if the service is down or if you need VPN/network access.',
+  },
+  {
+    id: 'network_http_error',
+    category: 'network',
+    patterns: [
+      /\b5\d{2}\b/,
+      /\bserver error\b/i,
+      /\binternal error\b/i,
+      /\bbad gateway\b/i,
+      /\bservice unavailable\b/i,
+    ],
+    retryable: true,
+    fixHint:
+      'Server error (5xx). This is usually temporary. Retry after a short wait. If persistent, the service may be down.',
+  },
+  {
+    id: 'invalid_arguments',
+    category: 'validation',
+    patterns: [
+      /\binvalid arguments?\b/i,
+      /\bmissing required\b/i,
+      /\brequired argument\b/i,
+      /\bexpected .* but got\b/i,
+      /\btype error\b/i,
+      /\bcannot read properties of undefined\b/i,
+      /\bis not a function\b/i,
+      /\bvalidation failed\b/i,
+      /\bargument .* is required\b/i,
+    ],
+    retryable: true,
+    fixHint:
+      'Check the tool arguments against the schema. Ensure all required fields are present and have correct types. Look at the error message for the specific field that failed.',
+  },
+  {
+    id: 'tool_not_found',
+    category: 'system',
+    patterns: [
+      /\bcommand not found\b/i,
+      /\bis not recognized\b/i,
+      /\bunknown command\b/i,
+      /\btool not found\b/i,
+      /\bspawn .* ENOENT\b/i,
+    ],
+    retryable: false,
+    fixHint:
+      'The required command or tool is not installed or not in PATH. Install it first or use an alternative approach.',
+  },
+  {
+    id: 'rate_limit',
+    category: 'rate_limit',
+    patterns: [
+      /\b429\b/,
+      /\brate.?limit/i,
+      /\btoo many requests\b/i,
+      /\bquota exceeded\b/i,
+      /\bthrottled\b/i,
+    ],
+    retryable: true,
+    fixHint:
+      'Rate limited. Wait before retrying. Consider reducing request frequency or using a different approach that requires fewer calls.',
+  },
+  {
+    id: 'disk_full',
+    category: 'filesystem',
+    patterns: [
+      /\bENOSPC\b/,
+      /\bno space left\b/i,
+      /\bdisk full\b/i,
+      /\bquota exceeded\b/i,
+    ],
+    retryable: false,
+    fixHint:
+      'Disk is full. Free up space before retrying. Remove temporary files or write to a different location.',
+  },
+  {
+    id: 'parse_error',
+    category: 'data',
+    patterns: [
+      /\bparse error\b/i,
+      /\bunexpected token\b/i,
+      /\bsyntax error\b/i,
+      /\bmalformed\b/i,
+      /\bunparsable\b/i,
+    ],
+    retryable: true,
+    fixHint:
+      'The data could not be parsed. Check the format (JSON, XML, etc.) and ensure it is well-formed. Validate special characters and escaping.',
+  },
+];
+
+export const EXCLUDED_TOOLS_WITH_OWN_HOOKS = new Set<string>([
+  'task',
+  'bash',
+  'webfetch',
+  'grep_app_searchgithub',
+  'websearch_web_search_exa',
+]);
+
+const SILENT_ERROR_PATTERN_IDS = new Set([
+  'network_timeout',
+  'network_connection',
+  'file_not_found',
+]);
+
+function hasExplicitErrorSignal(output: string): boolean {
+  return (
+    output.includes('[ERROR]') ||
+    output.includes('Error:') ||
+    output.includes('error:') ||
+    /^\s*error\b/i.test(output)
+  );
+}
+
+function findMatchingPattern(output: string): ToolErrorPattern | null {
+  for (const pattern of TOOL_ERROR_PATTERNS) {
+    for (const regex of pattern.patterns) {
+      if (regex.test(output)) {
+        return pattern;
+      }
+    }
+  }
+  return null;
+}
+
+export function detectToolError(output: string): DetectedToolError | null {
+  if (!output || typeof output !== 'string') return null;
+
+  const explicitError = hasExplicitErrorSignal(output);
+
+  if (!explicitError) {
+    const silentMatch = findMatchingPattern(output);
+    if (silentMatch && SILENT_ERROR_PATTERN_IDS.has(silentMatch.id)) {
+      return {
+        patternId: silentMatch.id,
+        category: silentMatch.category,
+        retryable: silentMatch.retryable,
+        fixHint: silentMatch.fixHint,
+        originalOutput: output,
+      };
+    }
+    return null;
+  }
+
+  const matched = findMatchingPattern(output);
+  if (matched) {
+    return {
+      patternId: matched.id,
+      category: matched.category,
+      retryable: matched.retryable,
+      fixHint: matched.fixHint,
+      originalOutput: output,
+    };
+  }
+
+  return {
+    patternId: 'generic_error',
+    category: 'unknown',
+    retryable: true,
+    fixHint:
+      'The tool failed with an unrecognized error. Read the error message carefully and address the root cause before retrying.',
+    originalOutput: output,
+  };
+}

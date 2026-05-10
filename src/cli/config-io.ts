@@ -453,7 +453,8 @@ export function detectCurrentConfig(): DetectedConfig {
       const models = Object.values(agents)
         .map((a) => a?.model)
         .filter(Boolean);
-      result.hasKimi = result.hasKimi || models.some((m) => m?.includes('kimi'));
+      result.hasKimi =
+        result.hasKimi || models.some((m) => m?.includes('kimi'));
       result.hasOpenAI = models.some((m) => m?.startsWith('openai/'));
       result.hasAnthropic = models.some((m) => m?.startsWith('anthropic/'));
       result.hasCopilot = models.some((m) => m?.startsWith('github-copilot/'));
