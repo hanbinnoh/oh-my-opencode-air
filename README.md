@@ -80,6 +80,14 @@ ping all agents
 
 All 5 agents (orchestrator, explorer, fixer, oracle, librarian) should respond.
 
+### Step 6: Global Agent Guidelines (Optional)
+
+To apply the baseline coding guidelines to all your projects, copy the `AGENTS.md` file to your global OpenCode configuration directory:
+
+```bash
+cp AGENTS.md ~/.config/opencode/AGENTS.md
+```
+
 ## Configuration
 
 Edit `~/.config/opencode/oh-my-opencode-air.json` to customize:
