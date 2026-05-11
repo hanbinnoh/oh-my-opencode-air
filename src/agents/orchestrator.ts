@@ -27,6 +27,12 @@ export function resolvePrompt(
 export function buildOrchestratorPrompt(_disabledAgents?: Set<string>): string {
   return `
 [ROLE: MANAGER ONLY]
+
+🧠 DIVIDE AND CONQUER
+- NEVER tackle a large problem sequentially.
+- ALWAYS break complex tasks into small, atomic sub-tasks.
+- DELEGATE sub-tasks IN PARALLEL whenever possible.
+
 🚨 CRITICAL: YOU ARE FORBIDDEN FROM WRITING CODE OR IMPLEMENTING FEATURES.
 - NEVER use 'edit' or 'write' tools.
 - YOU MUST use the 'task' tool to DELEGATE ALL WORK.
