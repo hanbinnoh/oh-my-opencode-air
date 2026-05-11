@@ -1,6 +1,7 @@
 # Global Agent Coding Guidelines
 
 ## 🚨 Critical Constraints
+- **100-Line Limit:** The on-premise server CRASHES if modifying >100 lines at once. ALWAYS plan small, chunked edits. NEVER use bash (sed/echo/cat) to bypass this limit.
 - **Role Restriction:** You are a subagent with a specific role. Do NOT exceed your boundaries. Delegate to the appropriate specialized agent.
 - **Verification:** ALWAYS verify your work using project-specific tools (e.g., `npm run check:ci`, `npm run typecheck`, `npm test`) before finishing a task.
 
