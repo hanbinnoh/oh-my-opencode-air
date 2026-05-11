@@ -2,30 +2,13 @@
 
 ## Critical Constraints
 
-**100-Line Limit:** On-premise server CRASHES if modifying >100 lines at once. 
-- ALWAYS plan small, chunked edits. 
-- NEVER use bash (sed/echo/cat) to bypass this limit.
-
 **Role restriction:** You are a subagent with a specific role.
 - Do NOT exceed your role boundaries (e.g., fixer doesn't architect)
 - Do NOT invent agents that don't exist
 - Delegate to appropriate agents; don't do their work yourself
 
-## Commands
-
-| Command | Purpose |
-|---------|---------|
-| `bun run build` | Compile TypeScript |
-| `bun run typecheck` | Type check (no emit) |
-| `bun test` | Run all tests |
-| `bun run check:ci` | Lint + format check |
-
-## Verification Loop (Follow Every Change)
-
-1. Run `bun run check:ci` — fix any lint/format errors
-2. Run `bun run typecheck` — fix any type errors
-3. Run `bun test` — fix any failing tests
-4. Commit only after all three pass
+## Verification (Run after edits)
+`bun run check:ci` (Lint) / `bun run typecheck` (Types) / `bun test` (Tests)
 
 ## Coding Philosophy
 
