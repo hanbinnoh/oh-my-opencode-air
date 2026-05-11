@@ -21,20 +21,18 @@ export const JSON_ERROR_PATTERNS = [
 ] as const;
 
 const JSON_ERROR_REMINDER_MARKER =
-  '[JSON PARSE ERROR - IMMEDIATE ACTION REQUIRED]';
+  '[JSON PARSE ERROR] Invalid JSON.';
 const JSON_ERROR_EXCLUDED_TOOLS = new Set<string>(JSON_ERROR_TOOL_EXCLUDE_LIST);
 
 export const JSON_ERROR_REMINDER = `
-[JSON PARSE ERROR - IMMEDIATE ACTION REQUIRED]
+[JSON PARSE ERROR] Invalid JSON.
 
-You sent invalid JSON arguments. The system could not parse your tool call.
-STOP and do this NOW:
+Fix these exact mistakes:
+1. NO Markdown: Do NOT wrap in \`\`\`json \`\`\`. Output raw JSON only.
+2. Escape Quotes: Use \\" for quotes inside strings.
+3. NO Trailing Commas: {"a": "b"} (O), {"a": "b",} (X).
 
-1. LOOK at the error message above to see what was expected vs what you sent.
-2. CORRECT your JSON syntax (missing braces, unescaped quotes, trailing commas, etc).
-3. RETRY the tool call with valid JSON.
-
-DO NOT repeat the exact same invalid call.
+Retry the tool call with corrected JSON.
 `;
 
 interface ToolExecuteAfterInput {

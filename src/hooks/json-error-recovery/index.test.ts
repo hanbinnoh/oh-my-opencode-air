@@ -77,7 +77,7 @@ describe('json-error-recovery hook', () => {
 
     const reminderCount =
       String(output.output).split(
-        '[JSON PARSE ERROR - IMMEDIATE ACTION REQUIRED]',
+        '[JSON PARSE ERROR] Invalid JSON.',
       ).length - 1;
     expect(reminderCount).toBe(1);
   });
