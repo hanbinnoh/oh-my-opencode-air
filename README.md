@@ -35,23 +35,26 @@ npm install
 npm run build
 ```
 
-### Step 3: Register the plugin
+### Step 3: Register plugin and disable default agents
 
-Add the plugin path to OpenCode config. The config file is at `~/.config/opencode/opencode.json` or `~/.config/opencode/opencode.jsonc`.
+Add the plugin path to OpenCode config and disable the default agents to prevent conflicts. The config file is at `~/.config/opencode/opencode.json` or `~/.config/opencode/opencode.jsonc`.
 
-If the file exists, add `"oh-my-opencode-air"` to the `plugin` array:
+If the file exists, update it to include the plugin and disable flags:
 ```jsonc
 {
-  "plugin": ["oh-my-opencode-air"]
+  "plugin": ["oh-my-opencode-air"],
+  "agent": {
+    "explore": {
+      "disable": true
+    },
+    "general": {
+      "disable": true
+    }
+  }
 }
 ```
 
-If the file does not exist, create it:
-```jsonc
-{
-  "plugin": ["oh-my-opencode-air"]
-}
-```
+If the file does not exist, create it with the above content.
 
 ### Step 4: Create agent configuration
 
