@@ -27,6 +27,8 @@ Must be **Node.js v18 or higher**.
 
 ### Step 2: Install dependencies and build
 
+If you have copied or unzipped the source code folder into WSL, you can build it directly using npm:
+
 ```bash
 cd /path/to/oh-my-opencode-air
 npm install
