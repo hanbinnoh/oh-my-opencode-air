@@ -50,12 +50,12 @@ export function createWriteConstraintHook() {
       const lineCount = countLines(contentToCheck);
 
       if (lineCount > MAX_LINES_PER_WRITE) {
+        const chunks = Math.ceil(lineCount / MAX_LINES_PER_WRITE);
+        const safeLines = Math.floor(MAX_LINES_PER_WRITE * 0.8);
         throw new Error(
-          `[WRITE LIMIT EXCEEDED] ${lineCount} lines exceeds ${MAX_LINES_PER_WRITE}-line limit.\n\n` +
-          `RULES:\n` +
-          `1. NEVER write/edit >100 lines in one call.\n` +
-          `2. SPLIT changes into smaller chunked 'edit' calls.\n` +
-          `3. RETRY with a smaller chunk.`
+          `EDIT REJECTED: ${lineCount} lines > ${MAX_LINES_PER_WRITE} limit. ` +
+          `Split into ${chunks} edits. ` +
+          `HINT: Set oldString to match the first ${safeLines} lines of the block you want to change.`
         );
       }
     },

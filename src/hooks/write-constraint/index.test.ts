@@ -42,14 +42,14 @@ describe('createWriteConstraintHook', () => {
       const output = createOutput({ newString: generateLines(101) });
       await expect(
         hook['tool.execute.before'](createInput('edit'), output),
-      ).rejects.toThrow(/101 lines exceeds 100-line limit/);
+      ).rejects.toThrow(/EDIT REJECTED/);
     });
 
     test('rejects large newString with descriptive message', async () => {
       const output = createOutput({ newString: generateLines(250) });
       await expect(
         hook['tool.execute.before'](createInput('edit'), output),
-      ).rejects.toThrow(/250 lines exceeds 100-line limit/);
+      ).rejects.toThrow(/EDIT REJECTED/);
     });
   });
 
@@ -72,7 +72,7 @@ describe('createWriteConstraintHook', () => {
       const output = createOutput({ content: generateLines(150) });
       await expect(
         hook['tool.execute.before'](createInput('write'), output),
-      ).rejects.toThrow(/150 lines exceeds 100-line limit/);
+      ).rejects.toThrow(/EDIT REJECTED/);
     });
   });
 
@@ -81,14 +81,14 @@ describe('createWriteConstraintHook', () => {
       const output = createOutput({ newString: generateLines(200) });
       await expect(
         hook['tool.execute.before'](createInput('Edit'), output),
-      ).rejects.toThrow(/200 lines exceeds 100-line limit/);
+      ).rejects.toThrow(/EDIT REJECTED/);
     });
 
     test('works with Write (capitalized)', async () => {
       const output = createOutput({ content: generateLines(200) });
       await expect(
         hook['tool.execute.before'](createInput('Write'), output),
-      ).rejects.toThrow(/200 lines exceeds 100-line limit/);
+      ).rejects.toThrow(/EDIT REJECTED/);
     });
   });
 
@@ -148,7 +148,7 @@ describe('createWriteConstraintHook', () => {
       const output = createOutput({ newString: generateLines(150) });
       await expect(
         hook['tool.execute.before'](createInput('edit'), output),
-      ).rejects.toThrow(/WRITE LIMIT EXCEEDED/);
+      ).rejects.toThrow(/EDIT REJECTED/);
     });
   });
 });
