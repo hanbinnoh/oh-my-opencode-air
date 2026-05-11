@@ -2,21 +2,14 @@
 
 ## Critical Constraints
 
-**Write tool limit:** The on-premise server has a strict 100-line-per-call limit.
-- ALWAYS chunk edit/write into ≤100 line segments
-- NEVER write/edit more than 100 lines in a single call
-- Split larger changes across multiple sequential calls
-- Violating this causes an unrecoverable session error
+**100-Line Limit:** On-premise server CRASHES if modifying >100 lines at once. 
+- ALWAYS plan small, chunked edits. 
+- NEVER use bash (sed/echo/cat) to bypass this limit.
 
 **Role restriction:** You are a subagent with a specific role.
 - Do NOT exceed your role boundaries (e.g., fixer doesn't architect)
 - Do NOT invent agents that don't exist
 - Delegate to appropriate agents; don't do their work yourself
-
-**Bash tool restriction:** The write constraint hook only monitors edit/write tools.
-- NEVER use the `bash` tool for file modifications (cat, echo >, sed -i, redirects, etc.)
-- Using bash to bypass the write limit will crash the on-premise server
-- Always use edit/write tools, chunked to ≤100 lines
 
 ## Commands
 
