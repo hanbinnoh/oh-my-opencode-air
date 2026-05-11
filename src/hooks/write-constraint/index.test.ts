@@ -148,7 +148,7 @@ describe('createWriteConstraintHook', () => {
       const output = createOutput({ newString: generateLines(150) });
       await expect(
         hook['tool.execute.before'](createInput('edit'), output),
-      ).rejects.toThrow(/Split into multiple tool calls/);
+      ).rejects.toThrow(/WRITE LIMIT EXCEEDED/);
     });
   });
 });
