@@ -25,15 +25,16 @@ export function buildRetryGuidance(errorInfo: DetectedError): string {
     '',
     '[delegate-task retry suggestion]',
     `Error type: ${errorInfo.errorType}`,
-    `Fix: ${pattern.fixHint}`,
+    'Fix these exact mistakes:',
+    ...pattern.fixHints.map((h) => `- ${h}`),
   ];
 
   if (available) {
-    lines.push(`Available: ${available}`);
+    lines.push(`Available agents: ${available}`);
   }
 
   lines.push(
-    'Retry now with corrected parameters. Example:',
+    'Example fix:',
     'task(description="...", prompt="...", category="unspecified-low", run_in_background=false, load_skills=[])',
   );
 
