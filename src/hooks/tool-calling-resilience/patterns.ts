@@ -29,7 +29,7 @@ export const TOOL_ERROR_PATTERNS: ToolErrorPattern[] = [
     ],
     retryable: true,
     fixHint:
-      'Verify the file path exists. Use glob or grep to find the correct path first. Check for typos in directory or file names.',
+      'Path not found. RUN glob or grep FIRST.',
   },
   {
     id: 'permission_denied',
@@ -44,7 +44,7 @@ export const TOOL_ERROR_PATTERNS: ToolErrorPattern[] = [
     ],
     retryable: true,
     fixHint:
-      'Check file permissions (ls -l) or run with appropriate privileges. If reading, ensure the file is readable. If writing, ensure the directory is writable.',
+      'Permission denied. RUN ls -l to check file mode.',
   },
   {
     id: 'network_timeout',
@@ -59,7 +59,7 @@ export const TOOL_ERROR_PATTERNS: ToolErrorPattern[] = [
     ],
     retryable: true,
     fixHint:
-      'The request timed out. This may be temporary. Wait a moment and retry. If the URL is slow, try a shorter timeout or fetch a smaller resource.',
+      'Timed out. Wait then retry.',
   },
   {
     id: 'network_connection',
@@ -76,7 +76,7 @@ export const TOOL_ERROR_PATTERNS: ToolErrorPattern[] = [
     ],
     retryable: true,
     fixHint:
-      'Connection failed. Verify the URL/host is correct and reachable. Check if the service is down or if you need VPN/network access.',
+      'Connection refused. Verify URL is reachable.',
   },
   {
     id: 'network_http_error',
@@ -90,7 +90,7 @@ export const TOOL_ERROR_PATTERNS: ToolErrorPattern[] = [
     ],
     retryable: true,
     fixHint:
-      'Server error (5xx). This is usually temporary. Retry after a short wait. If persistent, the service may be down.',
+      'Server error (5xx). Retry later.',
   },
   {
     id: 'invalid_arguments',
@@ -108,7 +108,7 @@ export const TOOL_ERROR_PATTERNS: ToolErrorPattern[] = [
     ],
     retryable: true,
     fixHint:
-      'Check the tool arguments against the schema. Ensure all required fields are present and have correct types. Look at the error message for the specific field that failed.',
+      'Invalid args. Check tool schema for required fields and types.',
   },
   {
     id: 'tool_not_found',
@@ -122,7 +122,7 @@ export const TOOL_ERROR_PATTERNS: ToolErrorPattern[] = [
     ],
     retryable: false,
     fixHint:
-      'The required command or tool is not installed or not in PATH. Install it first or use an alternative approach.',
+      'Tool not in PATH. Install it or use alternative.',
   },
   {
     id: 'rate_limit',
@@ -136,7 +136,7 @@ export const TOOL_ERROR_PATTERNS: ToolErrorPattern[] = [
     ],
     retryable: true,
     fixHint:
-      'Rate limited. Wait before retrying. Consider reducing request frequency or using a different approach that requires fewer calls.',
+      'Rate limited. Wait then retry.',
   },
   {
     id: 'disk_full',
@@ -149,7 +149,7 @@ export const TOOL_ERROR_PATTERNS: ToolErrorPattern[] = [
     ],
     retryable: false,
     fixHint:
-      'Disk is full. Free up space before retrying. Remove temporary files or write to a different location.',
+      'Disk full. Free space with rm/cleanup.',
   },
   {
     id: 'parse_error',
@@ -163,7 +163,7 @@ export const TOOL_ERROR_PATTERNS: ToolErrorPattern[] = [
     ],
     retryable: true,
     fixHint:
-      'The data could not be parsed. Check the format (JSON, XML, etc.) and ensure it is well-formed. Validate special characters and escaping.',
+      'Parse error. Validate data format (JSON/XML).',
   },
 ];
 
