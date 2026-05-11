@@ -1,7 +1,7 @@
 export const TODO_HYGIENE_REMINDER =
-  'If the active task changed or finished, update the todo list to match the current work state.';
+  '[TODO RULE] Update todo list when task changes or completes.';
 export const TODO_FINAL_ACTIVE_REMINDER =
-  'If you are finishing now, do not leave the active todo in_progress. Mark it completed, or move unfinished work back to pending.';
+  '[TODO RULE] Mark in_progress completed, or revert to pending.';
 
 const RESET = new Set(['todowrite']);
 const IGNORE = new Set(['auto_continue']);

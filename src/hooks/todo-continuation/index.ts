@@ -13,7 +13,7 @@ const COMMAND_NAME = 'auto-continue';
 const TODO_STATE_TIMEOUT_MS = 500;
 
 const CONTINUATION_PROMPT =
-  '[Auto-continue: enabled - there are incomplete todos remaining. Continue with the next uncompleted item. Press Esc to cancel. If you need user input or review for the next item, ask instead of proceeding.]';
+  '[Auto-continue] Todos remain — continue with next item. Esc to cancel.';
 const TODO_HYGIENE_INSTRUCTION_OPEN = '<instruction name="todo_hygiene">';
 const TODO_HYGIENE_INSTRUCTION_CLOSE = '</instruction>';
 
@@ -856,13 +856,13 @@ export function createTodoContinuationHook(
     if (hasIncompleteTodos) {
       output.parts.push(
         createInternalAgentTextPart(
-          `${CONTINUATION_PROMPT} [Auto-continue enabled: up to ${maxContinuations} continuations.]`,
+          `${CONTINUATION_PROMPT} [Up to ${maxContinuations} continuations.]`,
         ),
       );
     } else {
       output.parts.push(
         createInternalAgentTextPart(
-          `[Auto-continue: enabled for up to ${maxContinuations} continuations. No incomplete todos right now.]`,
+          `[Auto-continue] Up to ${maxContinuations} continuations — no incomplete todos.`,
         ),
       );
     }

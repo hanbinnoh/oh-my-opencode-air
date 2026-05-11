@@ -693,7 +693,7 @@ describe('createTodoContinuationHook', () => {
       const promptCall = contCall(ctx.client.session.prompt);
       expect(promptCall[0].path.id).toBe('session-123');
       expect(promptCall[0].body.parts[0].text).toContain(
-        '[Auto-continue: enabled - there are incomplete todos remaining.',
+        '[Auto-continue] Todos remain',
       );
       expect(promptCall[0].body.parts[0].text).toContain(
         SLIM_INTERNAL_INITIATOR_MARKER,
@@ -1577,7 +1577,7 @@ describe('createTodoContinuationHook', () => {
 
       expect(output.parts).toHaveLength(1);
       expect(output.parts[0].text).toContain(
-        '[Auto-continue: enabled - there are incomplete todos remaining.',
+        '[Auto-continue] Todos remain',
       );
       expect(output.parts[0].text).toContain(SLIM_INTERNAL_INITIATOR_MARKER);
     });
@@ -1682,7 +1682,7 @@ describe('createTodoContinuationHook', () => {
       );
       // Should have continuation prompt again (count was reset)
       expect(outputOn.parts[0].text).toContain(
-        '[Auto-continue: enabled - there are incomplete todos remaining.',
+        '[Auto-continue] Todos remain',
       );
     });
 
