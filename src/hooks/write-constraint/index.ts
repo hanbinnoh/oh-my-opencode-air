@@ -52,11 +52,8 @@ export function createWriteConstraintHook() {
       if (lineCount > MAX_LINES_PER_WRITE) {
         const chunks = Math.ceil(lineCount / MAX_LINES_PER_WRITE);
         const linesPerChunk = Math.ceil(lineCount / chunks);
-        throw new Error(
-          `EDIT REJECTED: ${lineCount} lines > ${MAX_LINES_PER_WRITE} limit. ` +
-          `Split into ${chunks} edits of ~${linesPerChunk} lines each. ` +
-          `HINT: For the first chunk, set 'oldString' to match the first ${linesPerChunk} lines, and 'newString' to your replacement. Then do the rest in subsequent calls.`
-        );
+        
+        throw new Error(`Split into ${chunks} edits of ~${linesPerChunk} lines each`);
       }
     },
   };
