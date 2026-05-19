@@ -20,7 +20,9 @@ import {
   createChatHeadersHook,
   createContextBudgetHook,
   createDelegateTaskRetryHook,
+  createEditErrorRecoveryHook,
   createFilterAvailableSkillsHook,
+  createHashlineReadEnhancerHook,
   createJsonErrorRecoveryHook,
   createPhaseReminderHook,
   createPostFileToolNudgeHook,
@@ -41,6 +43,7 @@ import {
   ast_grep_search,
   createPresetManager,
   createWebfetchTool,
+  createHashlineEditTool,
 } from './tools';
 import { recordTuiAgentModel, recordTuiAgentModels } from './tui-state';
 import {
@@ -119,12 +122,17 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
   let delegateTaskRetryHook: ReturnType<typeof createDelegateTaskRetryHook>;
   let applyPatchHook: ReturnType<typeof createApplyPatchHook>;
   let jsonErrorRecoveryHook: ReturnType<typeof createJsonErrorRecoveryHook>;
+  let editErrorRecoveryHook: ReturnType<typeof createEditErrorRecoveryHook>;
+  let hashlineReadEnhancerHook: ReturnType<
+    typeof createHashlineReadEnhancerHook
+  >;
   let writeConstraintHook: ReturnType<typeof createWriteConstraintHook>;
   let foregroundFallback: ForegroundFallbackManager;
   let todoContinuationHook: ReturnType<typeof createTodoContinuationHook>;
   let taskSessionManagerHook: ReturnType<typeof createTaskSessionManagerHook>;
   let contextBudgetHook: ReturnType<typeof createContextBudgetHook>;
   let presetManager: ReturnType<typeof createPresetManager>;
+  let hashlineEditTool: ReturnType<typeof createHashlineEditTool> | undefined;
   let webfetch: ReturnType<typeof createWebfetchTool>;
   let rewriteDisplayNameMentions: ReturnType<
     typeof createDisplayNameMentionRewriter
@@ -261,8 +269,9 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
     delegateTaskRetryHook = createDelegateTaskRetryHook(ctx);
 
     applyPatchHook = createApplyPatchHook(ctx);
-    // Initialize JSON parse error recovery hook
     jsonErrorRecoveryHook = createJsonErrorRecoveryHook(ctx);
+    editErrorRecoveryHook = createEditErrorRecoveryHook(ctx);
+    hashlineReadEnhancerHook = createHashlineReadEnhancerHook(ctx, config);
 
     // Initialize write constraint hook — enforces 100-line limit on
     // edit/write tool calls to prevent infinite loop errors
@@ -298,10 +307,15 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
     });
     presetManager = createPresetManager(ctx, config);
 
+    if (config.hashline_edit) {
+      hashlineEditTool = createHashlineEditTool(ctx);
+    }
+
     toolCount =
       Object.keys(todoContinuationHook.tool).length +
       1 + // webfetch
-      2; // ast_grep_search, ast_grep_replace
+      2 + // ast_grep_search, ast_grep_replace
+      (config.hashline_edit ? 1 : 0); // hashline_edit
   } catch (err) {
     // Plugin init failed: log visibly before re-throwing so the user
     // sees something actionable instead of a silent "loaded but empty".
@@ -362,6 +376,9 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
       ...todoContinuationHook.tool,
       ast_grep_search,
       ast_grep_replace,
+      ...(config.hashline_edit && hashlineEditTool
+        ? { hashline_edit: hashlineEditTool }
+        : {}),
     },
 
     mcp: mcps,
@@ -1066,6 +1083,38 @@ const OhMyOpenCodeLite: Plugin = async (ctx) => {
           },
         ),
       );
+
+      await runPostToolHook('edit-error-recovery', () =>
+        editErrorRecoveryHook['tool.execute.after'](
+          input as {
+            tool: string;
+            sessionID: string;
+            callID: string;
+          },
+          output as {
+            title: string;
+            output: string;
+            metadata: unknown;
+          },
+        ),
+      );
+
+      if (hashlineReadEnhancerHook) {
+        await runPostToolHook('hashline-read-enhancer', () =>
+          hashlineReadEnhancerHook['tool.execute.after'](
+            input as {
+              tool: string;
+              sessionID: string;
+              callID: string;
+            },
+            output as {
+              title: string;
+              output: string;
+              metadata: unknown;
+            },
+          ),
+        );
+      }
 
       await runPostToolHook('todo-continuation', () =>
         todoContinuationHook.handleToolExecuteAfter(

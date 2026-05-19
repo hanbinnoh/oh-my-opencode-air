@@ -118,6 +118,100 @@ export DS_SEARCH_API_KEY="your-token"
 
 The explorer agent will automatically use it for code search.
 
+## LSP (Language Server Protocol)
+
+LSP tools provide type-aware code navigation and diagnostics. OpenCode auto-detects LSP servers from your PATH.
+
+### Enable LSP
+
+Add to `~/.config/opencode/opencode.json`:
+
+```jsonc
+{
+  "lsp": true
+}
+```
+
+Restart OpenCode. The sidebar should show LSP servers instead of "LSPs are disabled".
+
+### Available LSP Tools
+
+| Tool | Agent Access | Description |
+|------|-------------|-------------|
+| `lsp_diagnostics` | fixer, oracle | Check type errors, lint warnings |
+| `lsp_goto_definition` | explorer, oracle | Jump to symbol definition |
+| `lsp_find_references` | explorer, oracle | Find all usages of a symbol |
+| `lsp_symbols` | explorer, oracle | List symbols in file/workspace |
+| `lsp_prepare_rename` | oracle | Check if rename is valid |
+| `lsp_rename` | oracle | Rename symbol across workspace |
+
+### Required LSP Servers
+
+Install language servers for your project's languages:
+
+```bash
+# TypeScript/JavaScript
+npm install -g typescript-language-server typescript
+
+# Python
+pip install basedpyright
+
+# Or use biome (already covers TS/JS + more)
+npm install -g @biomejs/biome
+```
+
+## Hashline Edit
+
+Precise line-anchored editing for dumb models. Each line gets a content hash (`LINE#ID`), preventing stale edit references.
+
+### Enable
+
+Add to `~/.config/opencode/oh-my-opencode-air.json`:
+
+```json
+{
+  "hashline_edit": true
+}
+```
+
+### Usage
+
+After enabling, the `read` tool output includes hash tags:
+
+```
+<content>
+1#AB|import { foo } from './bar'
+2#CD|
+3#EF|export function hello() {
+4#GH|  console.log('world')
+5#IJ|}
+</content>
+```
+
+The `hashline_edit` tool uses these hashes:
+
+```
+hashline_edit(
+  filePath: "/abs/path/to/file.ts",
+  edits: [{
+    op: "replace",
+    pos: "4#GH",
+    lines: ["  return 'world'"]
+  }]
+)
+```
+
+If the file content changes, the hash `GH` won't match line 4 anymore — the edit is rejected, preventing corruption.
+
+## What's New
+
+| Feature | Description |
+|---------|-------------|
+| **LSP agent access** | fixer can use `lsp_diagnostics`, explorer can use `lsp_find_references`, `lsp_goto_definition`, `lsp_symbols` |
+| **edit-error-recovery** | Auto-injects recovery reminder when edit tool fails (oldString not found, etc.) |
+| **hashline-edit** | Hash-anchored line editing. Prevents stale reference errors for dumb models |
+| **hashline-read-enhancer** | Auto-attaches content hashes to read tool output for hashline-edit |
+
 ## 100-Line Write Constraint
 
 The on-premise server has a strict 100-line-per-tool-call limit. This is enforced automatically by the write-constraint hook. Agents are also instructed in their prompts to chunk edits.
@@ -147,11 +241,12 @@ src/
 ├── agents/       # Agent factories (orchestrator, explorer, oracle, fixer)
 ├── cli/          # CLI entry point
 ├── config/       # Constants, schemas
-├── hooks/        # Lifecycle hooks (including write-constraint)
+├── hooks/        # Lifecycle hooks (edit-error-recovery, hashline-read-enhancer, etc.)
 ├── mcp/          # MCP servers (websearch, grep_app, ds_search)
 ├── multiplexer/  # Tmux/Zellij integration
+├── shared/       # Bun runtime shims (hash, file, spawn)
 ├── skills/       # Skills (codemap, simplify, karpathy-guidelines)
-├── tools/        # Tools (webfetch, AST-grep)
+├── tools/        # Tools (webfetch, AST-grep, hashline-edit)
 └── utils/        # Shared utilities
 ```
 

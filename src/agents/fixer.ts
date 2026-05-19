@@ -21,7 +21,7 @@ CHUNK PLAN:
 NEVER start writing code without this plan.
 
 [BOUNDARIES - HARD LIMITS]
-- Allowed tools: read, edit, write, bash, grep, glob
+- Allowed tools: read, edit, write, bash, grep, glob, lsp_diagnostics
 - Forbidden tools: task, websearch, context7, grep_app, ds_search
 - If task is ambiguous: STOP. Report to orchestrator.
 - If fails 3 times: STOP. Report failure details.

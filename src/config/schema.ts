@@ -309,6 +309,7 @@ export const PluginConfigSchema = z
     todoContinuation: TodoContinuationConfigSchema.optional(),
     fallback: FailoverConfigSchema.optional(),
     contextBudget: ContextBudgetConfigSchema.optional(),
+    hashline_edit: z.boolean().optional(),
   })
   .superRefine((value, ctx) => {
     if (value.agents) {

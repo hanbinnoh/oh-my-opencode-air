@@ -5,6 +5,7 @@ export { createChatHeadersHook } from './chat-headers';
 export { createContextBudgetHook } from './context-budget';
 export { createCoTEnforcementHook } from './cot-enforcement';
 export { createDelegateTaskRetryHook } from './delegate-task-retry';
+export { createEditErrorRecoveryHook } from './edit-error-recovery';
 export { createFilterAvailableSkillsHook } from './filter-available-skills';
 export {
   ForegroundFallbackManager,
@@ -18,3 +19,4 @@ export { createTaskSessionManagerHook } from './task-session-manager';
 export { createTodoContinuationHook } from './todo-continuation';
 export { createToolCallingResilienceHook } from './tool-calling-resilience';
 export { createWriteConstraintHook } from './write-constraint';
+export { createHashlineReadEnhancerHook } from './hashline-read-enhancer';

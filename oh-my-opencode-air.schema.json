@@ -576,6 +576,9 @@
           }
         }
       }
+    },
+    "hashline_edit": {
+      "type": "boolean"
     }
   },
   "title": "oh-my-opencode-air",
